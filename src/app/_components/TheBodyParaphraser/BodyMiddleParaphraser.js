@@ -8,7 +8,7 @@ import {
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 
-export default function BodyMiddle() {
+export default function BodyMiddleParaphraser() {
   return (
     <div className="flex flex-[1] justify-between items-start mt-5">
       <div className="flex flex-col h-full flex-[1] mr-4 text-sm font-light bg-white dark:bg-neutral-900 px-4 pt-[18px] pb-4 rounded-[17px]">

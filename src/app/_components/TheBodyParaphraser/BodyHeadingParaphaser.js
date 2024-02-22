@@ -38,7 +38,7 @@ const listModels = [
   },
 ];
 
-export default function BodyHeading() {
+export default function BodyHeadingParaphraser() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [linePosition, setLinePosition] = useState(0);
   const [lineWidth, setLineWidth] = useState(0);

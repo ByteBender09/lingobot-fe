@@ -6,7 +6,7 @@ import {
   faClockRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
-export default function BodyFooting() {
+export default function BodyFootingParaphraser() {
   return (
     <div className="flex justify-between items-start mt-5">
       <div className="px-4 py-3 flex items-center bg-cyan-100 dark:bg-gray-200 rounded-[14px] text-black ">
