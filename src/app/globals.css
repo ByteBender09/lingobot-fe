@@ -26,3 +26,11 @@ body {
   background: #555;
   border-radius: 4px;
 }
+
+.swal2-title {
+  font-size: 1.2em;
+}
+
+.swal2-popup{
+  width: 24em;
+}

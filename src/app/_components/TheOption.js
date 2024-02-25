@@ -2,6 +2,8 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
+import auth from "../utils/auth";
+import useAxiosPrivate from "../(pages)/hooks/useAxiosPrivate";
 import {
   faBarsStaggered,
   faSpellCheck,
@@ -13,6 +15,7 @@ import {
 
 export default function TheOption({ activeIndex, onActiveIndexChange }) {
   const router = useRouter();
+  const axiosPrivate = useAxiosPrivate();
 
   const options = [
     { name: "Paraphraser", icon: faBarsStaggered },
@@ -30,9 +33,21 @@ export default function TheOption({ activeIndex, onActiveIndexChange }) {
     onActiveIndexChange(index);
   };
 
+  //Log Out
   const handleSubOptionClick = (index) => {
     if (index === subObtions.length - 1) {
-      router.push("/auth");
+      const object = {
+        refresh_token: auth.getRefreshToken(),
+      };
+      axiosPrivate
+        .post("/auth/logout/", object)
+        .then(() => {
+          auth.logout();
+          router.push("/auth/login");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
   return (
