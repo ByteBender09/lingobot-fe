@@ -24,18 +24,6 @@ const listModels = [
     title: "Formal",
     active: false,
   },
-  {
-    title: "Academic",
-    active: false,
-  },
-  {
-    title: "Simple",
-    active: false,
-  },
-  {
-    title: "Creative",
-    active: false,
-  },
 ];
 
 export default function BodyHeadingParaphraser() {
@@ -66,7 +54,7 @@ export default function BodyHeadingParaphraser() {
 
   return (
     <div className="text-black dark:text-white">
-      <div className="flex items-center text-[15px] font-light">
+      <div className="hidden md:flex lg:flex xl:flex 2xl:flex items-center text-[15px] font-light">
         {languages.map((lang, index) => (
           <button
             key={index}
@@ -81,9 +69,19 @@ export default function BodyHeadingParaphraser() {
           All <FontAwesomeIcon icon={faAngleDown} className="h-1/2 ml-3" />
         </button>
       </div>
-      <div className="flex px-7 h-[43px] w-full items-center justify-between bg-white dark:bg-neutral-900 rounded-2xl rounded-tl-[0px] overflow-hidden">
+      <div
+        className="flex px-7 h-[43px] w-full items-center 
+        justify-center md:justify-center lg:justify-between xl:justify-between 2xl:justify-between
+         bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden
+        rounded-tl-[16px] md:rounded-tl-[0px] lg:rounded-tl-[0px] xl:rounded-tl-[0px] 2xl:rounded-tl-[0px]"
+      >
         <div className="flex h-full items-center">
-          <h3 className="text-[15px] font-medium mr-6">Models:</h3>
+          <h3
+            className="text-[15px] font-medium mr-6
+          hidden md:block lg:block xl:block 2xl:block"
+          >
+            Models:
+          </h3>
           <div className="flex h-full relative overflow-x-auto" ref={lineRef}>
             {listModels.map((item, index) => (
               <button
@@ -104,7 +102,7 @@ export default function BodyHeadingParaphraser() {
             ></div>
           </div>
         </div>
-        <div className="flex">
+        <div className="hidden md:hidden lg:flex xl:flex 2xl:flex">
           <h3 className="text-[15px] font-medium">Synonyms:</h3>
           <input
             type="range"

@@ -25,7 +25,12 @@ export default function MainScreen() {
   return (
     <div className="w-screen h-screen px-[22px] py-8 bg-sky-100 dark:bg-neutral-900 relative">
       <TheHeading openModal={openModal} />
-      <div className="flex h-[90%] items-start justify-between mt-6">
+      <div
+        className="flex 
+      flex-col md:flex-col lg:flex-row xl:flex-row 2xl:flex-row
+      h-[90%] items-start justify-between 
+      mt-2 md:mt-2 lg:mt-6 xl:mt-6 2xl:mt-6"
+      >
         <TheOption
           activeIndex={activeIndex}
           onActiveIndexChange={handleActiveIndexChange}

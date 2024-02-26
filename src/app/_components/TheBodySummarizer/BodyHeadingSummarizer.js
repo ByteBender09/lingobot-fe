@@ -41,9 +41,18 @@ export default function BodyHeadingSummarizer() {
 
   return (
     <div className="text-black dark:text-white">
-      <div className="flex px-7 h-[43px] w-full items-center justify-between bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden">
-        <div className="flex h-full items-center">
-          <h3 className="text-[15px] font-medium mr-6">Models:</h3>
+      <div
+        className="flex px-7 h-[43px] w-full items-center 
+      justify-center md:justify-center lg:justify-between xl:justify-between 2xl:justify-between
+       bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden"
+      >
+        <div className="flex h-full items-center justify-center">
+          <h3
+            className="text-[15px] font-medium mr-6
+          hidden md:block lg:block xl:block 2xl:block"
+          >
+            Models:
+          </h3>
           <div className="flex h-full relative overflow-x-auto" ref={lineRef}>
             {listModels.map((item, index) => (
               <button
@@ -65,7 +74,7 @@ export default function BodyHeadingSummarizer() {
           </div>
         </div>
         {activeIndex == 0 && (
-          <div className="flex">
+          <div className="hidden md:hidden lg:flex xl:flex 2xl:flex">
             <h3 className="text-[15px] font-medium mr-5">Summary Length:</h3>
             <h4 className="text-[15px] font-normal">Short</h4>
             <input

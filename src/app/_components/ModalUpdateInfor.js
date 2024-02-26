@@ -79,7 +79,11 @@ export default function ModalUpdateInfor({ closeModal }) {
 
   return (
     <div className="w-screen h-screen bg-black bg-opacity-60 flex items-center justify-center absolute top-0 left-0">
-      <div className="flex flex-col px-10 py-9 bg-white rounded-[20px] min-w-[40%] relative">
+      <div
+        className="flex flex-col 
+      px-4 md:px-4 lg:px-10 xl:px-10 2xl:px-10
+       py-9 bg-white rounded-[20px] min-w-[40%] relative"
+      >
         <button className="absolute top-10 right-10" onClick={closeModal}>
           <FontAwesomeIcon icon={faClose} size="1x" />
         </button>
@@ -87,7 +91,7 @@ export default function ModalUpdateInfor({ closeModal }) {
           Update Information
         </h3>
         <div className="flex justify-between items-start">
-          <div className="flex flex-col justify-start">
+          <div className="flex flex-col justify-start mr-[1%]">
             <span className="text-neutral-600 text-base font-normal mb-2">
               First Name
             </span>
@@ -104,7 +108,7 @@ export default function ModalUpdateInfor({ closeModal }) {
                 : ""}
             </span>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col ml-[1%]">
             <span className="text-neutral-600 text-base font-normal mb-2">
               Last Name
             </span>
