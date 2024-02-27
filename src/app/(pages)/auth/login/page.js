@@ -85,10 +85,10 @@ export default function LogIn() {
   return (
     <div className="flex w-screen h-screen items-center justify-center bg-gray-100">
       <div className="flex flex-col px-16 py-14 bg-white rounded-lg min-w-[38%]">
-        <h2 className="text-zinc-800 text-3xl font-bold mb-3">
+        <h2 className="text-zinc-800 text-2xl md:text-2xl lg:text-3xl xl:text-3xl 2xl:text-3xl font-bold mb-3">
           Log in to your LingoBot
         </h2>
-        <p className="text-neutral-600 text-lg font-normal mr-12 mb-6">
+        <p className="text-neutral-600 text-base md:text-base lg:text-lg xl:text-lg 2xl:text-lg font-normal mr-12 mb-6">
           Choose one of the option to go
         </p>
         <input
