@@ -1,25 +1,19 @@
 "use client";
 
-import {
-  faEye,
-  faEyeSlash,
-  faExclamationCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AlertNotify } from "@/app/_components/Others/alertNotify";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { axiosClient } from "../../api/axios";
+import { PATH, APIPATH } from "@/app/const";
+import validateEmail from "@/app/utils/validate";
 import Image from "next/image";
 import Facebook from "@/app/_externals/assets/ic_facebook.png";
 import Google from "@/app/_externals/assets/ic_google.png";
-import auth from "@/app/utils/auth";
+import authRepository from "@/app/utils/auth";
 import Swal from "sweetalert2";
 import Link from "next/link";
-
-const validateEmail = (email) => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(String(email).toLowerCase());
-};
 
 export default function LogIn() {
   const [email, setEmail] = useState("");
@@ -29,22 +23,24 @@ export default function LogIn() {
   const [checkPasswordValid, setCheckPasswordValid] = useState(false);
   const [checkLogIn, setCheckLogIn] = useState(false);
 
-  const EmailInput = useRef();
-  const PasswordInput = useRef();
+  const emailInput = useRef();
+  const passwordInput = useRef();
 
   const router = useRouter();
+  const goHome = () => router.push(PATH.HOME);
 
+  //Set Visible Password
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmitLogIn = (e) => {
     e.preventDefault();
     setCheckLogIn(false);
 
     if (email.length == 0 || !validateEmail(email)) {
       setCheckEmailValid(true);
-      EmailInput.current.focus();
+      emailInput.current.focus();
       return;
     } else {
       setCheckEmailValid(false);
@@ -52,7 +48,7 @@ export default function LogIn() {
 
     if (password.length == 0) {
       setCheckPasswordValid(true);
-      PasswordInput.current.focus();
+      passwordInput.current.focus();
       return;
     } else {
       setCheckPasswordValid(false);
@@ -64,20 +60,20 @@ export default function LogIn() {
         password: password,
       };
       axiosClient
-        .post("/auth/login/", object)
+        .post(APIPATH.LOGIN, object)
         .then((res) => {
           setCheckLogIn(false);
-          auth.login(res);
+          authRepository.login(res);
           Swal.fire({
             title: "Successfully Login",
             icon: "success",
           });
-          router.push("/");
+          goHome();
         })
         .catch((err) => {
           console.log(err);
           setCheckLogIn(true);
-          EmailInput.current.focus();
+          emailInput.current.focus();
         });
     }
   };
@@ -96,7 +92,7 @@ export default function LogIn() {
           className="w-full bg-white px-4 py-3 mb-3 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
           placeholder="Enter your email"
           value={email}
-          ref={EmailInput}
+          ref={emailInput}
           onChange={(e) => setEmail(e.target.value)}
         />
         <span>
@@ -109,7 +105,7 @@ export default function LogIn() {
             className="w-full h-full bg-white px-4 py-3 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
             placeholder="Enter your password"
             value={password}
-            ref={PasswordInput}
+            ref={passwordInput}
             onChange={(e) => setPassword(e.target.value)}
           />
           <div className="absolute h-full flex justify-center items-center right-3 top-0">
@@ -140,7 +136,7 @@ export default function LogIn() {
         </div>
         <button
           className="w-2/3 py-3 bg-blue-600 rounded-lg text-white text-base font-normal self-center"
-          onClick={handleSubmit}
+          onClick={handleSubmitLogIn}
         >
           Log In
         </button>
@@ -151,15 +147,3 @@ export default function LogIn() {
     </div>
   );
 }
-
-const AlertNotify = (title) => {
-  return (
-    <div className="text-sm font-light text-red-600 mb-3">
-      <FontAwesomeIcon
-        icon={faExclamationCircle}
-        style={{ paddingRight: "4px" }}
-      />
-      {title}
-    </div>
-  );
-};

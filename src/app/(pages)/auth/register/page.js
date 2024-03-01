@@ -1,21 +1,15 @@
 "use client";
 
-import {
-  faEye,
-  faEyeSlash,
-  faExclamationCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { axiosClient } from "../../api/axios";
+import { AlertNotify } from "@/app/_components/Others/alertNotify";
+import { PATH, APIPATH } from "@/app/const";
+import validateEmail from "@/app/utils/validate";
 import Swal from "sweetalert2";
 import Link from "next/link";
-
-const validateEmail = (email) => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(String(email).toLowerCase());
-};
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -29,10 +23,10 @@ export default function Register() {
   const [checkPasswordValid, setCheckPasswordValid] = useState(false);
   const [checkRegister, setCheckRegister] = useState(false);
 
-  const EmailInput = useRef();
-  const PasswordInput = useRef();
-  const FirstNameInput = useRef();
-  const LastNameInput = useRef();
+  const emailInput = useRef();
+  const passwordInput = useRef();
+  const firstNameInput = useRef();
+  const lastNameInput = useRef();
 
   const router = useRouter();
 
@@ -40,13 +34,10 @@ export default function Register() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setCheckRegister(false);
-
+  const validateBeforeSubmit = () => {
     if (email.length == 0 || !validateEmail(email)) {
       setCheckEmailValid(true);
-      EmailInput.current.focus();
+      emailInput.current.focus();
       return;
     } else {
       setCheckEmailValid(false);
@@ -54,7 +45,7 @@ export default function Register() {
 
     if (password.length == 0) {
       setCheckPasswordValid(true);
-      PasswordInput.current.focus();
+      passwordInput.current.focus();
       return;
     } else {
       setCheckPasswordValid(false);
@@ -62,7 +53,7 @@ export default function Register() {
 
     if (firstName.length == 0) {
       setCheckFirstNameValid(true);
-      FirstNameInput.current.focus();
+      firstNameInput.current.focus();
       return;
     } else {
       setCheckFirstNameValid(false);
@@ -70,11 +61,18 @@ export default function Register() {
 
     if (lastName.length == 0) {
       setCheckLastNameValid(true);
-      LastNameInput.current.focus();
+      lastNameInput.current.focus();
       return;
     } else {
       setCheckLastNameValid(false);
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setCheckRegister(false);
+
+    validateBeforeSubmit();
 
     if (
       !checkEmailValid &&
@@ -90,19 +88,19 @@ export default function Register() {
         gender: "male",
       };
       axiosClient
-        .post("/auth/register/", object)
+        .post(APIPATH.REGISTER, object)
         .then(() => {
           setCheckRegister(false);
           Swal.fire({
             title: "Successfully Register",
             icon: "success",
           });
-          router.push("/auth/login");
+          router.push(PATH.LOGIN);
         })
         .catch((err) => {
           console.log(err);
           setCheckRegister(true);
-          EmailInput.current.focus();
+          emailInput.current.focus();
         });
     }
   };
@@ -118,7 +116,7 @@ export default function Register() {
           className="w-full bg-white px-4 py-3 mb-3 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
           placeholder="Enter your email"
           value={email}
-          ref={EmailInput}
+          ref={emailInput}
           onChange={(e) => setEmail(e.target.value)}
         />
         <span>
@@ -133,7 +131,7 @@ export default function Register() {
             className="w-full h-full bg-white px-4 py-3 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
             placeholder="Enter your password"
             value={password}
-            ref={PasswordInput}
+            ref={passwordInput}
             onChange={(e) => setPassword(e.target.value)}
           />
           <div className="absolute h-full flex justify-center items-center right-3 top-0">
@@ -152,7 +150,7 @@ export default function Register() {
           className="w-full h-full bg-white mb-3 px-4 py-3 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
           placeholder="Enter your first name"
           value={firstName}
-          ref={FirstNameInput}
+          ref={firstNameInput}
           onChange={(e) => setFirstName(e.target.value)}
         />
         <span>
@@ -165,7 +163,7 @@ export default function Register() {
           className="w-full h-full bg-white mb-3 px-4 py-3 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
           placeholder="Enter your last name"
           value={lastName}
-          ref={LastNameInput}
+          ref={lastNameInput}
           onChange={(e) => setLastName(e.target.value)}
         />
         <span>
@@ -184,15 +182,3 @@ export default function Register() {
     </div>
   );
 }
-
-const AlertNotify = (title) => {
-  return (
-    <div className="text-sm font-light text-red-600 mb-3">
-      <FontAwesomeIcon
-        icon={faExclamationCircle}
-        style={{ paddingRight: "4px" }}
-      />
-      {title}
-    </div>
-  );
-};

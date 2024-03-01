@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { axiosPrivate } from "../api/axios";
-import auth from "@/app/utils/auth";
+import authRepository from "@/app/utils/auth";
 import useRefreshToken from "./useRefreshToken";
 
 const useAxiosPrivate = () => {
@@ -10,7 +10,7 @@ const useAxiosPrivate = () => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
         if (!config.headers.authorization) {
-          config.headers.authorization = `Bearer ${auth.getAccessToken()}`;
+          config.headers.authorization = `Bearer ${authRepository.getAccessToken()}`;
         }
         return config;
       },
@@ -34,7 +34,7 @@ const useAxiosPrivate = () => {
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth.getAccessToken(), refresh]);
+  }, [authRepository.getAccessToken(), refresh]);
 
   return axiosPrivate;
 };

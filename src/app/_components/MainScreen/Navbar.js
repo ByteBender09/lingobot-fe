@@ -2,21 +2,48 @@
 
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState, useEffect } from "react";
+import { PATH } from "@/app/const";
+import ModalUpdateUserInfor from "./ModalUpdateInfor";
 import Image from "next/image";
-import Logo from "../../app/_externals/assets/LogoApp.svg";
-import USA from "../_externals/assets/USA.svg";
-import auth from "../utils/auth";
+import Logo from "@/app/_externals/assets/LogoApp.svg";
+import USA from "@/app/_externals/assets/USA.svg";
+import authRepository from "../../utils/auth";
+import Link from "next/link";
 
 const toggleTheme = () => {
   document.documentElement.classList.toggle("dark");
 };
 
-export default function TheHeading({ openModal }) {
+export default function Navbar() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [nameProfile, setNameProfile] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const info = await authRepository.getInfo();
+        setNameProfile(info.name);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
+    fetchData();
+  }, []); // Chỉ gọi một lần sau khi component được mount
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <div className="flex items-center justify-between">
-      <div className="flex-[1] mr-8">
+      <Link href={PATH.HOME} className="flex-[1] mr-8">
         <Image src={Logo} alt="Logo" />
-      </div>
+      </Link>
       <div
         className="flex-[2] md:flex-[2] lg:flex-[4.7] xl:flex-[4.7] 2xl:flex-[4.7]
       flex justify-between items-center"
@@ -31,7 +58,7 @@ export default function TheHeading({ openModal }) {
           </h1>
         </div>
         <div className="flex text-stone-500 dark:text-white">
-          <button
+          <span
             className="text-black dark:text-white 
             text-sm md:text-sm lg:text-base xl:text-base 2xl:text-base
             font-semibold self-center 
@@ -39,8 +66,8 @@ export default function TheHeading({ openModal }) {
             cursor-pointer hover:text-blue-600"
             onClick={openModal}
           >
-            Hi {auth.getInfo().name}
-          </button>
+            Hi {nameProfile}
+          </span>
           <div
             className="w-10 h-10 
           hidden md:hidden lg:flex xl:flex 2xl:flex
@@ -61,6 +88,7 @@ export default function TheHeading({ openModal }) {
           </div>
         </div>
       </div>
+      {isModalOpen && <ModalUpdateUserInfor closeModal={closeModal} />}
     </div>
   );
 }

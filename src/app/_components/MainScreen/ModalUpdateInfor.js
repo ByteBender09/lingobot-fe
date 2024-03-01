@@ -3,15 +3,12 @@
 import { useState, useRef, useEffect } from "react";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import useAxiosPrivate from "../(pages)/hooks/useAxiosPrivate";
+import { GENDERS, APIPATH } from "@/app/const";
+import { AlertNotify } from "../Others/alertNotify";
+import useAxiosPrivate from "../../(pages)/hooks/useAxiosPrivate";
 import Swal from "sweetalert2";
 
-const GENDERS = {
-  MALE: "male",
-  FEMALE: "female",
-};
-
-export default function ModalUpdateInfor({ closeModal }) {
+export default function ModalUpdateUserInfor({ closeModal }) {
   const axiosPrivate = useAxiosPrivate();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -22,23 +19,7 @@ export default function ModalUpdateInfor({ closeModal }) {
   const FirstNameInput = useRef();
   const LastNameInput = useRef();
 
-  useEffect(() => {
-    axiosPrivate
-      .get("/auth/profile/")
-      .then((res) => {
-        setFirstName(res.data?.data?.first_name);
-        setLastName(res.data?.data?.last_name);
-        setGender(res.data?.data?.gender);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleUpdate = (e) => {
-    e.preventDefault();
-
+  const validateBeforeSubmit = () => {
     if (firstName.length == 0) {
       setCheckFirstNameValid(true);
       FirstNameInput.current.focus();
@@ -54,6 +35,12 @@ export default function ModalUpdateInfor({ closeModal }) {
     } else {
       setCheckLastNameValid(false);
     }
+  };
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+
+    validateBeforeSubmit();
 
     if (!checkFirstNameValid && !checkLastNameValid) {
       const object = {
@@ -62,7 +49,7 @@ export default function ModalUpdateInfor({ closeModal }) {
         gender: gender,
       };
       axiosPrivate
-        .patch("/auth/update/", object)
+        .patch(APIPATH.UPDATE_PROFILE, object)
         .then(() => {
           Swal.fire({
             title: "Successfully Update",
@@ -77,8 +64,22 @@ export default function ModalUpdateInfor({ closeModal }) {
     }
   };
 
+  useEffect(() => {
+    axiosPrivate
+      .get(APIPATH.GET_PROFILE)
+      .then((res) => {
+        setFirstName(res.data?.data?.first_name);
+        setLastName(res.data?.data?.last_name);
+        setGender(res.data?.data?.gender);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div className="w-screen h-screen bg-black bg-opacity-60 flex items-center justify-center absolute top-0 left-0">
+    <div className="fixed inset-0 z-[1000] bg-black bg-opacity-70 flex flex-col items-center justify-center">
       <div
         className="flex flex-col 
       px-4 md:px-4 lg:px-10 xl:px-10 2xl:px-10
@@ -171,7 +172,3 @@ export default function ModalUpdateInfor({ closeModal }) {
     </div>
   );
 }
-
-const AlertNotify = (title) => {
-  return <span className="text-sm font-light text-red-600 mb-3">{title}</span>;
-};

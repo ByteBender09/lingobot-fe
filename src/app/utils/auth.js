@@ -1,4 +1,4 @@
-const auth = {
+const authRepository = {
   login(data) {
     localStorage.name =
       data.data.user.first_name + " " + data.data.user.last_name;
@@ -16,11 +16,15 @@ const auth = {
   },
 
   getAccessToken() {
-    return localStorage.accessToken;
+    if (typeof localStorage !== "undefined") {
+      return localStorage.accessToken;
+    }
   },
 
   getRefreshToken() {
-    return localStorage.refreshToken;
+    if (typeof localStorage !== "undefined") {
+      return localStorage.refreshToken;
+    }
   },
 
   getID() {
@@ -36,11 +40,13 @@ const auth = {
   },
 
   getInfo() {
-    return {
-      name: localStorage.name || "",
-      gender: localStorage.gender || "",
-      email: localStorage.email || "",
-    };
+    if (typeof localStorage !== "undefined") {
+      return {
+        name: localStorage.name || "",
+        gender: localStorage.gender || "",
+        email: localStorage.email || "",
+      };
+    }
   },
 
   getAvatar() {
@@ -67,4 +73,4 @@ const auth = {
   },
 };
 
-export default auth;
+export default authRepository;

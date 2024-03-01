@@ -1,9 +1,5 @@
 "use client";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRouter } from "next/navigation";
-import auth from "../utils/auth";
-import useAxiosPrivate from "../(pages)/hooks/useAxiosPrivate";
 import {
   faBarsStaggered,
   faSpellCheck,
@@ -11,11 +7,14 @@ import {
   faEnvelope,
   faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
+import { PATH, APIPATH } from "@/app/const";
+import useAxiosPrivate from "../../(pages)/hooks/useAxiosPrivate";
+import authRepository from "../../utils/auth";
 
-export default function TheOption({ activeIndex, onActiveIndexChange }) {
-  const router = useRouter();
-  const axiosPrivate = useAxiosPrivate();
-
+export default function LeftSideMenu({ activeIndex, onActiveIndexChange }) {
+  //FIX CATEGORIES
   const options = [
     { name: "Paraphraser", icon: faBarsStaggered },
     { name: "Summarizer", icon: faRectangleList },
@@ -27,21 +26,25 @@ export default function TheOption({ activeIndex, onActiveIndexChange }) {
     { name: "Log Out", icon: faArrowRightFromBracket },
   ];
 
-  const handleButtonClick = (index) => {
+  const router = useRouter();
+  const axiosPrivate = useAxiosPrivate();
+
+  const handleOptionItemClick = (index) => {
     onActiveIndexChange(index);
   };
 
-  //Log Out
-  const handleSubOptionClick = (index) => {
+  //SubObtions Click Handle Like Contact Us, LogOut
+  const handleSubOptionItemClick = (index) => {
     if (index === subObtions.length - 1) {
+      //Log Out
       const object = {
-        refresh_token: auth.getRefreshToken(),
+        refresh_token: authRepository.getRefreshToken(),
       };
       axiosPrivate
-        .post("/auth/logout/", object)
+        .post(APIPATH.LOGOUT, object)
         .then(() => {
-          auth.logout();
-          router.push("/auth/login");
+          authRepository.logout();
+          router.push(PATH.LOGIN);
         })
         .catch((err) => {
           console.log(err);
@@ -63,14 +66,13 @@ export default function TheOption({ activeIndex, onActiveIndexChange }) {
           rounded-tr-[15px] rounded-br-[15px]
           rounded-tl-[15px] md:rounded-tl-[15px] lg:rounded-tl-[0] xl:rounded-tl-[0] 2xl:rounded-tl-[0]
           rounded-bl-[15px] md:rounded-bl-[15px] lg:rounded-bl-[0] xl:rounded-bl-[0] 2xl:rounded-bl-[0]
-            flex flex-col md:flex-col lg:flex-row xl:flex-row 2xl:flex-row
-            items-center 
-            justify-center md:justify-center lg:justify-start xl:justify-start 2xl:justify-start
-            h-max md:h-max lg:h-12 xl:h-12 2xl:h-12
-            p-3 w-full mb-[6px] ${
-              index === activeIndex ? "bg-amber-300 dark:bg-neutral-800" : ""
-            }`}
-          onClick={() => handleButtonClick(index)}
+          flex flex-col md:flex-col lg:flex-row xl:flex-row 2xl:flex-row
+          justify-center md:justify-center lg:justify-start xl:justify-start 2xl:justify-start
+          h-max md:h-max lg:h-12 xl:h-12 2xl:h-12
+          w-full items-center p-3 mb-[6px] ${
+            index === activeIndex ? "bg-amber-300 dark:bg-neutral-800" : ""
+          }`}
+          onClick={() => handleOptionItemClick(index)}
         >
           <FontAwesomeIcon
             icon={option.icon}
@@ -84,7 +86,7 @@ export default function TheOption({ activeIndex, onActiveIndexChange }) {
       ))}
       <div
         className=" hidden md:hidden lg:block xl:block 2xl:block 
-       w-full h-[1px] bg-stone-400 my-8"
+                    w-full h-[1px] bg-stone-400 my-8"
       ></div>
       {subObtions.map((option, index) => (
         <button
@@ -94,11 +96,10 @@ export default function TheOption({ activeIndex, onActiveIndexChange }) {
           rounded-bl-[15px] md:rounded-bl-[15px] lg:rounded-bl-[0] xl:rounded-bl-[0] 2xl:rounded-bl-[0]
           hidden md:hidden lg:flex xl:flex 2xl:flex 
           flex-col md:flex-col lg:flex-row xl:flex-row 2xl:flex-row
-          items-center 
           justify-center md:justify-center lg:justify-start xl:justify-start 2xl:justify-start
           h-max md:h-max lg:h-12 xl:h-12 2xl:h-12
-          p-3 w-full mb-[6px] hover:bg-amber-300 hover:dark:bg-neutral-800"
-          onClick={() => handleSubOptionClick(index)}
+          p-3 w-full items-center mb-[6px] hover:bg-amber-300 hover:dark:bg-neutral-800"
+          onClick={() => handleSubOptionItemClick(index)}
         >
           <FontAwesomeIcon
             icon={option.icon}
