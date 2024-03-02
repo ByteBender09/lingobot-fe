@@ -61,6 +61,10 @@ const authRepository = {
     localStorage.avatar = avt;
   },
 
+  updateUserInfor(name) {
+    localStorage.name = name;
+  },
+
   updateInfo(userInfo) {
     localStorage.name = userInfo.name;
     localStorage.gender = userInfo.gender;

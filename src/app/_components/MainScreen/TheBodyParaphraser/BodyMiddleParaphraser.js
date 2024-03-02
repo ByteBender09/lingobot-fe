@@ -1,3 +1,5 @@
+"use client";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSnowflake,
@@ -7,8 +9,21 @@ import {
   faChevronUp,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import { countWords } from "@/app/utils/handleText";
 
 export default function BodyMiddleParaphraser() {
+  const [content, setContent] = useState("");
+
+  //Handle clear user input
+  const clearInput = () => {
+    setContent("");
+  };
+
+  const handleInputChange = (event) => {
+    setContent(event.target.value);
+  };
+
   return (
     <div
       className="flex
@@ -21,15 +36,24 @@ export default function BodyMiddleParaphraser() {
       mb-2 md:mb-2 lg:mb-0 xl:mb-0 2xl:mb-0   
       text-sm font-light bg-white dark:bg-neutral-900 px-4 pt-[18px] pb-4 rounded-[17px]"
       >
-        <textarea className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2" />
+        <textarea
+          className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2"
+          value={content}
+          onChange={handleInputChange}
+        />
         <div className="flex items-center justify-between text-black dark:text-white">
           <div className="flex items-center ">
-            <span className="text-[15px] font-light mr-3">57 Words</span>
+            <span className="text-[15px] font-light mr-3">
+              {countWords(content)} Words
+            </span>
             <button className="mr-3 hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block">
-              <FontAwesomeIcon icon={faSnowflake} size="xl" />
+              <FontAwesomeIcon icon={faSnowflake} size="xl" color="#666666" />
             </button>
-            <button className="hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block">
-              <FontAwesomeIcon icon={faTrash} size="xl" />
+            <button
+              className="hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block"
+              onClick={clearInput}
+            >
+              <FontAwesomeIcon icon={faTrash} size="xl" color="#666666" />
             </button>
           </div>
           <button className="py-[10px] px-9 dark:bg-green-600 bg-amber-300 rounded-[18px] text-[15px] font-medium hover:bg-amber-400 dark:hover:bg-green-700 transition duration-200 ease-in-out">

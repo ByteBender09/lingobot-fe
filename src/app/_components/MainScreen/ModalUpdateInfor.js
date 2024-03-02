@@ -7,6 +7,8 @@ import { GENDERS, APIPATH } from "@/app/const";
 import { AlertNotify } from "../Others/alertNotify";
 import useAxiosPrivate from "../../(pages)/hooks/useAxiosPrivate";
 import Swal from "sweetalert2";
+import LoadingSpinner from "../Others/spinner";
+import authRepository from "@/app/utils/auth";
 
 export default function ModalUpdateUserInfor({ closeModal }) {
   const axiosPrivate = useAxiosPrivate();
@@ -15,6 +17,7 @@ export default function ModalUpdateUserInfor({ closeModal }) {
   const [gender, setGender] = useState(GENDERS.MALE);
   const [checkFirstNameValid, setCheckFirstNameValid] = useState(false);
   const [checkLastNameValid, setCheckLastNameValid] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const FirstNameInput = useRef();
   const LastNameInput = useRef();
@@ -43,6 +46,7 @@ export default function ModalUpdateUserInfor({ closeModal }) {
     validateBeforeSubmit();
 
     if (!checkFirstNameValid && !checkLastNameValid) {
+      setLoading(true);
       const object = {
         first_name: firstName,
         last_name: lastName,
@@ -50,7 +54,9 @@ export default function ModalUpdateUserInfor({ closeModal }) {
       };
       axiosPrivate
         .patch(APIPATH.UPDATE_PROFILE, object)
-        .then(() => {
+        .then((res) => {
+          setLoading(false);
+          authRepository.updateUserInfor(firstName + " " + lastName);
           Swal.fire({
             title: "Successfully Update",
             icon: "success",
@@ -60,6 +66,7 @@ export default function ModalUpdateUserInfor({ closeModal }) {
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false);
         });
     }
   };
@@ -162,12 +169,16 @@ export default function ModalUpdateUserInfor({ closeModal }) {
             </label>
           </div>
         </div>
-        <button
-          className="w-[140px] h-10 self-center bg-sky-500 hover:bg-sky-600 rounded-[10px] text-white text-sm font-normal mt-9"
-          onClick={handleUpdate}
-        >
-          Update
-        </button>
+        {!isLoading ? (
+          <button
+            className="w-[140px] h-10 self-center bg-sky-500 hover:bg-sky-600 rounded-[10px] text-white text-sm font-normal mt-9"
+            onClick={handleUpdate}
+          >
+            Update
+          </button>
+        ) : (
+          <LoadingSpinner />
+        )}
       </div>
     </div>
   );

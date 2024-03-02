@@ -14,6 +14,7 @@ import Google from "@/app/_externals/assets/ic_google.png";
 import authRepository from "@/app/utils/auth";
 import Swal from "sweetalert2";
 import Link from "next/link";
+import LoadingSpinner from "@/app/_components/Others/spinner";
 
 export default function LogIn() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ export default function LogIn() {
   const [checkEmailValid, setCheckEmailValid] = useState(false);
   const [checkPasswordValid, setCheckPasswordValid] = useState(false);
   const [checkLogIn, setCheckLogIn] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const emailInput = useRef();
   const passwordInput = useRef();
@@ -55,6 +57,7 @@ export default function LogIn() {
     }
 
     if (!checkEmailValid && !checkPasswordValid) {
+      setLoading(true);
       const object = {
         email: email,
         password: password,
@@ -64,6 +67,7 @@ export default function LogIn() {
         .then((res) => {
           setCheckLogIn(false);
           authRepository.login(res);
+          setLoading(false);
           Swal.fire({
             title: "Successfully Login",
             icon: "success",
@@ -73,6 +77,7 @@ export default function LogIn() {
         .catch((err) => {
           console.log(err);
           setCheckLogIn(true);
+          setLoading(false);
           emailInput.current.focus();
         });
     }
@@ -95,10 +100,8 @@ export default function LogIn() {
           ref={emailInput}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <span>
-          {checkEmailValid ? AlertNotify("Email is not valid") : ""}
-          {checkLogIn ? AlertNotify("Email or password is wrong") : ""}
-        </span>
+        {checkEmailValid ? AlertNotify("Email is not valid") : ""}
+        {checkLogIn ? AlertNotify("Email or password is wrong") : ""}
         <div className="w-full relative mb-3">
           <input
             type={showPassword ? "text" : "password"}
@@ -116,9 +119,7 @@ export default function LogIn() {
             />
           </div>
         </div>
-        <span>
-          {checkPasswordValid ? AlertNotify("Password is not valid") : ""}
-        </span>
+        {checkPasswordValid ? AlertNotify("Password is not valid") : ""}
 
         <button className="text-blue-600 mb-8 self-end">
           Forgot password?
@@ -134,12 +135,16 @@ export default function LogIn() {
             <Image src={Google} alt="Google icon" className="size-8" />
           </div>
         </div>
-        <button
-          className="w-2/3 py-3 bg-blue-600 rounded-lg text-white text-base font-normal self-center"
-          onClick={handleSubmitLogIn}
-        >
-          Log In
-        </button>
+        {!isLoading ? (
+          <button
+            className="w-2/3 py-3 bg-blue-600 rounded-lg text-white text-base font-normal self-center"
+            onClick={handleSubmitLogIn}
+          >
+            Log In
+          </button>
+        ) : (
+          <LoadingSpinner />
+        )}
         <Link className="text-blue-600 mt-4 self-center" href="/auth/register">
           Dont have an account? Register
         </Link>

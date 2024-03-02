@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Navbar from "@/app/_components/MainScreen/Navbar";
 import LeftSideMenu from "@/app/_components/MainScreen/TheOption";
 import TheBodyParaphraser from "@/app/_components/MainScreen/TheBodyParaphraser/TheBodyParaphraser";
 import TheBodySummarizer from "@/app/_components/MainScreen/TheBodySummarizer/TheBodySummarizer";
@@ -13,17 +14,20 @@ export default function HomePage() {
   };
 
   return (
-    <div
-      className="flex
+    <div className="px-[22px] py-6">
+      <Navbar />
+      <div
+        className="flex
           flex-col md:flex-col lg:flex-row xl:flex-row 2xl:flex-row
           h-[95vh] items-start justify-between 
           mt-2 md:mt-2 lg:mt-6 xl:mt-6 2xl:mt-6"
-    >
-      <LeftSideMenu
-        activeIndex={activeIndex}
-        onActiveIndexChange={handleActiveIndexChange}
-      />
-      {activeIndex == 0 ? <TheBodyParaphraser /> : <TheBodySummarizer />}
+      >
+        <LeftSideMenu
+          activeIndex={activeIndex}
+          onActiveIndexChange={handleActiveIndexChange}
+        />
+        {activeIndex == 0 ? <TheBodyParaphraser /> : <TheBodySummarizer />}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,11 @@
 "use client";
 
-import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMoon,
+  faSun,
+  faCrown,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
 import { PATH } from "@/app/const";
@@ -58,16 +63,40 @@ export default function Navbar() {
           </h1>
         </div>
         <div className="flex text-stone-500 dark:text-white">
-          <span
+          <div
             className="text-black dark:text-white 
             text-sm md:text-sm lg:text-base xl:text-base 2xl:text-base
-            font-semibold self-center 
+            font-semibold self-center relative h-[40px]
+            flex items-center justify-center text_profile
             mr-3 md:mr-3 lg:mr-5 xl:mr-5 2xl:mr-5
-            cursor-pointer hover:text-blue-600"
-            onClick={openModal}
+            cursor-pointer "
           >
             Hi {nameProfile}
-          </span>
+            <div
+              className="absolute w-max bottom-[-100px] right-0 
+              transition-opacity opacity-0 duration-500 modal_profile
+              hidden flex-col py-2 bg-white rounded-[10px] shadow"
+            >
+              <Link
+                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start bg-white hover:bg-amber-300"
+                href={PATH.PREMIUM}
+              >
+                <FontAwesomeIcon icon={faCrown} className="mr-6" />
+                <span className="text-black text-base font-normal">
+                  Premium
+                </span>
+              </Link>
+              <div
+                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start bg-white hover:bg-amber-300"
+                onClick={openModal}
+              >
+                <FontAwesomeIcon icon={faUser} className="mr-7" />
+                <span className="text-black text-base font-normal">
+                  Profile
+                </span>
+              </div>
+            </div>
+          </div>
           <div
             className="w-10 h-10 
           hidden md:hidden lg:flex xl:flex 2xl:flex

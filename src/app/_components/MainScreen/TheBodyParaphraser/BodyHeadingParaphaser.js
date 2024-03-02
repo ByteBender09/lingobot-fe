@@ -82,7 +82,7 @@ export default function BodyHeadingParaphraser() {
           >
             Models:
           </h3>
-          <div className="flex h-full relative overflow-x-auto" ref={lineRef}>
+          <div className="flex h-full relative" ref={lineRef}>
             {listModels.map((item, index) => (
               <button
                 key={index}

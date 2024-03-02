@@ -76,7 +76,7 @@ export default function LeftSideMenu({ activeIndex, onActiveIndexChange }) {
         >
           <FontAwesomeIcon
             icon={option.icon}
-            className="h-2/3 
+            className="h-4 md:h-4 lg:h-2/3 xl:h-2/3 2xl:h-2/3 
             mr-0 md:mr-0 lg:mr-4 xl:mr-4 2xl:mr-4
             mb-1 md:mb-1 lg:mb-0 xl:mb-0 2xl:mb-0
             "

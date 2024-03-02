@@ -34,3 +34,19 @@ body {
 .swal2-popup{
   width: 24em;
 }
+
+.text_profile::after{
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  width: 100%;
+  height: 10px;
+  display: block;
+  background-color: transparent;
+
+}
+
+.text_profile:hover .modal_profile{
+  display: flex;
+  opacity: 1;
+}

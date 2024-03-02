@@ -10,6 +10,7 @@ import { PATH, APIPATH } from "@/app/const";
 import validateEmail from "@/app/utils/validate";
 import Swal from "sweetalert2";
 import Link from "next/link";
+import LoadingSpinner from "@/app/_components/Others/spinner";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ export default function Register() {
   const [checkLastNameValid, setCheckLastNameValid] = useState(false);
   const [checkPasswordValid, setCheckPasswordValid] = useState(false);
   const [checkRegister, setCheckRegister] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const emailInput = useRef();
   const passwordInput = useRef();
@@ -68,7 +70,7 @@ export default function Register() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmitRegister = (e) => {
     e.preventDefault();
     setCheckRegister(false);
 
@@ -80,6 +82,7 @@ export default function Register() {
       !checkFirstNameValid &&
       !checkLastNameValid
     ) {
+      setLoading(true);
       const object = {
         email: email,
         password: password,
@@ -91,6 +94,7 @@ export default function Register() {
         .post(APIPATH.REGISTER, object)
         .then(() => {
           setCheckRegister(false);
+          setLoading(false);
           Swal.fire({
             title: "Successfully Register",
             icon: "success",
@@ -100,6 +104,7 @@ export default function Register() {
         .catch((err) => {
           console.log(err);
           setCheckRegister(true);
+          setLoading(false);
           emailInput.current.focus();
         });
     }
@@ -169,12 +174,16 @@ export default function Register() {
         <span>
           {checkLastNameValid ? AlertNotify("Last name mustn't be empty") : ""}
         </span>
-        <button
-          className="w-2/3 py-3 bg-blue-600 rounded-lg text-white text-base font-normal self-center mt-7"
-          onClick={handleSubmit}
-        >
-          Register
-        </button>
+        {!isLoading ? (
+          <button
+            className="w-2/3 py-3 bg-blue-600 rounded-lg text-white text-base font-normal self-center mt-7"
+            onClick={handleSubmitRegister}
+          >
+            Register
+          </button>
+        ) : (
+          <LoadingSpinner />
+        )}
         <Link className="text-blue-600 mt-4 self-center" href="/auth/login">
           Already have an account? Log In
         </Link>
