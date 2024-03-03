@@ -4,6 +4,7 @@ export const PATH = {
   LOGIN: "/auth/login",
   REGISTER: "/auth/register",
   PREMIUM: "/premium",
+  UPGRADE: "/upgrade",
 };
 
 export const GENDERS = {
@@ -18,3 +19,25 @@ export const APIPATH = {
   REGISTER: "/auth/register/",
   LOGOUT: "/auth/logout/",
 };
+
+export const freeServiceItems = [
+  "125 words in Paraphraser",
+  "Standard and Fluency modes",
+  "1,200 words in Summarizer",
+  "1 Freeze Word",
+];
+
+export const premiumServiceItems = [
+  "Unlimited words in Paraphraser",
+  "Standard and Fluency modes",
+  "6,000 words in Summarizer",
+  "Unlimited Freeze Words",
+];
+
+export const specificServiceItems = [
+  "Grammar Checker",
+  "Faster processing speed",
+  "Premium recommendations",
+  "Compare Modes",
+  "Paraphraser History",
+];

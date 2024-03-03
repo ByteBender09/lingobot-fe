@@ -45,7 +45,7 @@ export default function Navbar() {
     setIsModalOpen(false);
   };
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex w-full items-center justify-between">
       <Link href={PATH.HOME} className="flex-[1] mr-8">
         <Image src={Logo} alt="Logo" />
       </Link>
@@ -100,11 +100,11 @@ export default function Navbar() {
           <div
             className="w-10 h-10 
           hidden md:hidden lg:flex xl:flex 2xl:flex
-          items-center justify-center bg-white dark:bg-neutral-800 rounded-[5px]"
+          items-center justify-center bg-white dark:bg-neutral-800 rounded-[5px] shadow"
           >
             <Image src={USA} alt="USA" />
           </div>
-          <div className="w-10 h-10 flex items-center justify-center bg-white dark:bg-neutral-800 rounded-[5px] ml-1">
+          <div className="w-10 h-10 flex items-center justify-center bg-white dark:bg-neutral-800 rounded-[5px] ml-1 shadow">
             <button onClick={() => toggleTheme()} className="w-1/3 dark:hidden">
               <FontAwesomeIcon icon={faMoon} />
             </button>

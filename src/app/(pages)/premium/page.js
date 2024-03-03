@@ -2,31 +2,19 @@
 
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
+import {
+  PATH,
+  freeServiceItems,
+  premiumServiceItems,
+  specificServiceItems,
+} from "@/app/const";
 import Navbar from "@/app/_components/MainScreen/Navbar";
 
-const freeServiceItems = [
-  "125 words in Paraphraser",
-  "Standard and Fluency modes",
-  "1,200 words in Summarizer",
-  "1 Freeze Word",
-];
+export default function PremiumPage() {
+  const router = useRouter();
 
-const premiumServiceItems = [
-  "Unlimited words in Paraphraser",
-  "Standard and Fluency modes",
-  "6,000 words in Summarizer",
-  "Unlimited Freeze Words",
-];
-
-const specificServiceItems = [
-  "Grammar Checker",
-  "Faster processing speed",
-  "Premium recommendations",
-  "Compare Modes",
-  "Paraphraser History",
-];
-
-export default function Premium() {
+  const goUpgrade = () => router.push(PATH.UPGRADE);
   return (
     <div className="px-[22px] py-6">
       <Navbar />
@@ -53,7 +41,10 @@ export default function Premium() {
             <h3 className="text-black dark:text-white text-[22px] font-medium mb-5">
               Free
             </h3>
-            <button className="bg-white dark:bg-neutral-900 mb-7 rounded-[28px] border border-slate-300 dark:border-neutral-500 py-2 w-full text-slate-300 dark:text-neutral-500 text-[15px] font-medium">
+            <button
+              className="bg-white dark:bg-neutral-900 mb-7 rounded-[28px] border border-slate-300 dark:border-neutral-500 py-2 w-full 
+            text-slate-300 dark:text-neutral-500 text-[15px] font-medium"
+            >
               Current Plan
             </button>
             <div className="flex flex-col self-start">
@@ -100,6 +91,7 @@ export default function Premium() {
               <button
                 className="bg-amber-300 mb-7 rounded-[28px] border border-amber-300 py-2 w-full text-black text-[15px] font-medium
               hover:bg-amber-400 transition duration-200 ease-in-out"
+                onClick={goUpgrade}
               >
                 Update
               </button>
