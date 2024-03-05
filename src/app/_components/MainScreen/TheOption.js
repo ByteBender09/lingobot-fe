@@ -2,7 +2,6 @@
 
 import {
   faBarsStaggered,
-  faSpellCheck,
   faRectangleList,
   faEnvelope,
   faArrowRightFromBracket,
@@ -18,7 +17,6 @@ export default function LeftSideMenu({ activeIndex, onActiveIndexChange }) {
   const options = [
     { name: "Paraphraser", icon: faBarsStaggered },
     { name: "Summarizer", icon: faRectangleList },
-    { name: "Grammar Checker", icon: faSpellCheck },
   ];
 
   const subObtions = [

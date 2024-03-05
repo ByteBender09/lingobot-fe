@@ -35,6 +35,10 @@ const authRepository = {
     return localStorage.phone;
   },
 
+  getName() {
+    return localStorage.name;
+  },
+
   role() {
     return localStorage.role;
   },

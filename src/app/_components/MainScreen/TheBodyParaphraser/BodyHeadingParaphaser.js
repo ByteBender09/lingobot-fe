@@ -1,15 +1,8 @@
 "use client";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { useState, useRef, useEffect } from "react";
 
-const languages = [
-  { name: "English (US)", active: true },
-  { name: "French", active: false },
-  { name: "Spanish", active: false },
-  { name: "German", active: false },
-];
+const languages = [{ name: "English (US)", active: true }];
 
 const listModels = [
   {
@@ -65,9 +58,6 @@ export default function BodyHeadingParaphraser() {
             {lang.name}
           </button>
         ))}
-        <button className="py-2 px-4 h-10 rounded-tl-[15px] rounded-tr-[15px] flex items-center justify-between">
-          All <FontAwesomeIcon icon={faAngleDown} className="h-1/2 ml-3" />
-        </button>
       </div>
       <div
         className="flex px-7 h-[43px] w-full items-center 

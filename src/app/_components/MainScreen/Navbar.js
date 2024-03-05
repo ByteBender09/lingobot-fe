@@ -5,10 +5,13 @@ import {
   faSun,
   faCrown,
   faUser,
+  faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
-import { PATH } from "@/app/const";
+import { PATH, APIPATH } from "@/app/const";
+import { useRouter } from "next/navigation";
+import useAxiosPrivate from "@/app/(pages)/hooks/useAxiosPrivate";
 import ModalUpdateUserInfor from "./ModalUpdateInfor";
 import Image from "next/image";
 import Logo from "@/app/_externals/assets/LogoApp.svg";
@@ -23,6 +26,8 @@ const toggleTheme = () => {
 export default function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nameProfile, setNameProfile] = useState("");
+  const axiosPrivate = useAxiosPrivate();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +48,21 @@ export default function Navbar() {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleLogOutClick = () => {
+    const object = {
+      refresh_token: authRepository.getRefreshToken(),
+    };
+    axiosPrivate
+      .post(APIPATH.LOGOUT, object)
+      .then(() => {
+        authRepository.logout();
+        router.push(PATH.LOGIN);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <div className="flex w-full items-center justify-between">
@@ -73,26 +93,47 @@ export default function Navbar() {
           >
             Hi {nameProfile}
             <div
-              className="absolute w-max bottom-[-100px] right-0 
+              className="absolute w-max bottom-[-140px] right-0 
               transition-opacity opacity-0 duration-500 modal_profile
-              hidden flex-col py-2 bg-white rounded-[10px] shadow"
+              hidden flex-col py-2 bg-white dark:bg-neutral-900 rounded-[10px] shadow"
             >
               <Link
-                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start bg-white hover:bg-amber-300"
+                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start 
+              bg-white dark:bg-neutral-900 hover:bg-amber-300"
                 href={PATH.PREMIUM}
               >
-                <FontAwesomeIcon icon={faCrown} className="mr-6" />
-                <span className="text-black text-base font-normal">
+                <FontAwesomeIcon
+                  icon={faCrown}
+                  className="mr-6 dark:text-white"
+                />
+                <span className="text-black dark:text-white text-base font-normal">
                   Premium
                 </span>
               </Link>
               <div
-                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start bg-white hover:bg-amber-300"
+                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start
+              bg-white dark:bg-neutral-900 hover:bg-amber-300"
                 onClick={openModal}
               >
-                <FontAwesomeIcon icon={faUser} className="mr-7" />
-                <span className="text-black text-base font-normal">
+                <FontAwesomeIcon
+                  icon={faUser}
+                  className="mr-7 dark:text-white"
+                />
+                <span className="text-black dark:text-white text-base font-normal">
                   Profile
+                </span>
+              </div>
+              <div
+                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start
+              bg-white dark:bg-neutral-900 hover:bg-amber-300"
+                onClick={handleLogOutClick}
+              >
+                <FontAwesomeIcon
+                  icon={faArrowRightFromBracket}
+                  className="mr-7 dark:text-white"
+                />
+                <span className="text-black dark:text-white text-base font-normal">
+                  Log Out
                 </span>
               </div>
             </div>
