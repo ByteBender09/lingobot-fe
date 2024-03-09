@@ -56,7 +56,10 @@ export default function BodyMiddleParaphraser() {
               <FontAwesomeIcon icon={faTrash} size="xl" color="#666666" />
             </button>
           </div>
-          <button className="py-[10px] px-9 dark:bg-green-600 bg-amber-300 rounded-[18px] text-[15px] font-medium hover:bg-amber-400 dark:hover:bg-green-700 transition duration-200 ease-in-out">
+          <button
+            className="py-[10px] px-9 dark:bg-green-600 bg-amber-300 rounded-[18px] text-[15px] font-medium
+           hover:bg-amber-400 dark:hover:bg-green-700 transition duration-200 ease-in-out"
+          >
             Rephrase
           </button>
         </div>

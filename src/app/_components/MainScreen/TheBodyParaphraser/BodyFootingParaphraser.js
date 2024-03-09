@@ -1,3 +1,5 @@
+"use client";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGear,
@@ -5,8 +7,21 @@ import {
   faKeyboard,
   faClockRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import ModalSettings from "../ModalSettings";
 
 export default function BodyFootingParaphraser() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [phaseSetting, setPhaseSetting] = useState(0);
+
+  const handleOpenModal = (phaseState) => {
+    setPhaseSetting(phaseState);
+    setIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
   return (
     <div
       className="hidden md:hidden lg:flex xl:flex 2xl:flex
@@ -20,10 +35,16 @@ export default function BodyFootingParaphraser() {
           <FontAwesomeIcon icon={faChartSimple} />
         </button>
         <button className="mr-4">
-          <FontAwesomeIcon icon={faKeyboard} />
+          <FontAwesomeIcon
+            icon={faKeyboard}
+            onClick={() => handleOpenModal(0)}
+          />
         </button>
         <button>
-          <FontAwesomeIcon icon={faClockRotateLeft} />
+          <FontAwesomeIcon
+            icon={faClockRotateLeft}
+            onClick={() => handleOpenModal(1)}
+          />
         </button>
       </div>
       <div className="flex px-5 py-3 self-end bg-white dark:bg-neutral-900 rounded-[14px] text-black dark:text-white text-[14px] font-normal">
@@ -40,6 +61,12 @@ export default function BodyFootingParaphraser() {
           <span>Longest Unchanged Words</span>
         </div>
       </div>
+      {isOpen && (
+        <ModalSettings
+          closeModal={handleCloseModal}
+          phaseSettings={phaseSetting}
+        />
+      )}
     </div>
   );
 }
