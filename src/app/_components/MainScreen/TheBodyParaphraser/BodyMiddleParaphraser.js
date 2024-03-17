@@ -2,18 +2,22 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSnowflake,
+  faCloudArrowUp,
   faTrash,
   faCopy,
   faDownload,
   faChevronUp,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
-import { countWords } from "@/app/utils/handleText";
+import {
+  countWordsFromDocFile,
+  getParagraphsFromDocFile,
+} from "@/app/utils/handleText";
+import { useState, useRef } from "react";
 
 export default function BodyMiddleParaphraser() {
   const [content, setContent] = useState("");
+  const fileInputRef = useRef(null);
 
   //Handle clear user input
   const clearInput = () => {
@@ -22,6 +26,26 @@ export default function BodyMiddleParaphraser() {
 
   const handleInputChange = (event) => {
     setContent(event.target.value);
+  };
+
+  const handleUpload = () => {
+    fileInputRef.current.click();
+  };
+
+  const onFileUpload = (event) => {
+    const reader = new FileReader();
+    let file = event.target.files[0];
+
+    reader.onload = (e) => {
+      const content = e.target.result;
+      const paragraphs = getParagraphsFromDocFile(content);
+      setContent(paragraphs);
+      console.log(paragraphs);
+    };
+
+    reader.onerror = (err) => console.error(err);
+
+    reader.readAsBinaryString(file);
   };
 
   return (
@@ -36,6 +60,13 @@ export default function BodyMiddleParaphraser() {
       mb-2 md:mb-2 lg:mb-0 xl:mb-0 2xl:mb-0   
       text-sm font-light bg-white dark:bg-neutral-900 px-4 pt-[18px] pb-4 rounded-[17px]"
       >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".docx"
+          style={{ display: "none" }}
+          onChange={onFileUpload}
+        />
         <textarea
           className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2"
           value={content}
@@ -44,10 +75,17 @@ export default function BodyMiddleParaphraser() {
         <div className="flex items-center justify-between text-black dark:text-white">
           <div className="flex items-center ">
             <span className="text-[15px] font-light mr-3">
-              {countWords(content)} Words
+              {countWordsFromDocFile(content)} Words
             </span>
-            <button className="mr-3 hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block">
-              <FontAwesomeIcon icon={faSnowflake} size="xl" color="#666666" />
+            <button
+              className="mr-3 hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block"
+              onClick={handleUpload}
+            >
+              <FontAwesomeIcon
+                icon={faCloudArrowUp}
+                size="xl"
+                color="#666666"
+              />
             </button>
             <button
               className="hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block"

@@ -1,7 +1,33 @@
+"use client";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { useState, useRef } from "react";
+import { getParagraphsFromDocFile } from "@/app/utils/handleText";
 
 export default function BodyMiddleSummarizer() {
+  const [paragraphs, setParagraphs] = useState("");
+  const fileInputRef = useRef(null);
+
+  const handleUpload = () => {
+    fileInputRef.current.click();
+  };
+
+  const onFileUpload = (event) => {
+    const reader = new FileReader();
+    let file = event.target.files[0];
+
+    reader.onload = (e) => {
+      const content = e.target.result;
+      const paragraphs = getParagraphsFromDocFile(content);
+      setParagraphs(paragraphs);
+    };
+
+    reader.onerror = (err) => console.error(err);
+
+    reader.readAsBinaryString(file);
+  };
+
   return (
     <div
       className="flex 
@@ -14,8 +40,16 @@ export default function BodyMiddleSummarizer() {
       mb-2 md:mb-2 lg:mb-0 xl:mb-0 2xl:mb-0    
        text-base font-light bg-white dark:bg-neutral-900 px-4 pt-[18px] pb-4 rounded-[17px]"
       >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".docx"
+          style={{ display: "none" }}
+          onChange={onFileUpload}
+        />
         <textarea
           className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2"
+          value={paragraphs}
           placeholder="Enter or paste your text and press 'Summarize'"
         />
         <div
@@ -24,7 +58,10 @@ export default function BodyMiddleSummarizer() {
          text-black dark:text-white"
         >
           <div className="flex items-center ">
-            <button className="hidden md:hidden lg:flex xl:flex 2xl:flex">
+            <button
+              className="hidden md:hidden lg:flex xl:flex 2xl:flex"
+              onClick={handleUpload}
+            >
               <FontAwesomeIcon
                 icon={faCloudArrowUp}
                 size="xl"
