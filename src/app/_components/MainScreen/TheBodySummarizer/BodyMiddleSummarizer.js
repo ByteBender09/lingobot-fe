@@ -13,6 +13,10 @@ export default function BodyMiddleSummarizer() {
     fileInputRef.current.click();
   };
 
+  const handleInputChange = (event) => {
+    setParagraphs(event.target.value);
+  };
+
   const onFileUpload = (event) => {
     const reader = new FileReader();
     let file = event.target.files[0];
@@ -50,6 +54,7 @@ export default function BodyMiddleSummarizer() {
         <textarea
           className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2"
           value={paragraphs}
+          onChange={handleInputChange}
           placeholder="Enter or paste your text and press 'Summarize'"
         />
         <div

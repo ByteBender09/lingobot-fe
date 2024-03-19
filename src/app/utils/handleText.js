@@ -1,5 +1,6 @@
 import PizZip from "pizzip";
 import { DOMParser } from "@xmldom/xmldom";
+import { bool } from "prop-types";
 
 //Function Count Words From String
 export const countWords = (content) => {
@@ -62,4 +63,29 @@ export const getParagraphsFromDocFile = (content) => {
     }
   }
   return paragraphs;
+};
+
+// Function to save text into clipboard
+export const saveToClipboard = (text) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      return true;
+    })
+    .catch((err) => {
+      console.log(err);
+      return false;
+    });
+};
+
+// Function create file .docx from content
+export const createDocx = (content) => {
+  const element = document.createElement("a");
+  const file = new Blob([content], {
+    type: "text/plain;charset=utf-8",
+  });
+  element.href = URL.createObjectURL(file);
+  element.download = "Output.txt";
+  document.body.appendChild(element);
+  element.click();
 };

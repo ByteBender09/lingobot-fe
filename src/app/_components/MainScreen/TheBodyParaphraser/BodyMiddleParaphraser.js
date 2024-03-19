@@ -12,16 +12,34 @@ import {
 import {
   countWordsFromDocFile,
   getParagraphsFromDocFile,
+  saveToClipboard,
+  createDocx,
 } from "@/app/utils/handleText";
 import { useState, useRef } from "react";
 
 export default function BodyMiddleParaphraser() {
   const [content, setContent] = useState("");
+  const [output, setOutput] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
   const fileInputRef = useRef(null);
 
   //Handle clear user input
   const clearInput = () => {
     setContent("");
+  };
+
+  //Handle save output to clipboard
+  const handleSaveToClipboard = () => {
+    setIsCopied(true);
+    saveToClipboard(output);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+  };
+
+  //Handle download file docx with output content
+  const handleDownload = () => {
+    createDocx(output);
   };
 
   const handleInputChange = (event) => {
@@ -107,7 +125,11 @@ export default function BodyMiddleParaphraser() {
        ml-0 md:ml-0 lg:ml-[0.5%] xl:ml-[0.5%] 2xl:ml-[0.5%]
         bg-white dark:bg-neutral-900 px-4 py-[18px] rounded-[17px]"
       >
-        <textarea className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2" />
+        <textarea
+          className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2"
+          value={output}
+          readOnly={true}
+        />
         <div
           className="hidden md:flex lg:flex xl:flex 2xl:flex 
         items-center justify-between text-black dark:text-white"
@@ -123,15 +145,19 @@ export default function BodyMiddleParaphraser() {
               <span className="hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block">
                 1/3 Sentences •
               </span>
-              <span>&nbsp;53 Words</span>
+              <span>&nbsp;{countWordsFromDocFile(output)} Words</span>
             </div>
           </div>
           <div className="flex items-center">
-            <button>
+            <button onClick={handleDownload}>
               <FontAwesomeIcon icon={faDownload} size="xl" />
             </button>
-            <button className="ml-3">
-              <FontAwesomeIcon icon={faCopy} size="xl" />
+            <button className="ml-3" onClick={handleSaveToClipboard}>
+              <FontAwesomeIcon
+                icon={faCopy}
+                size="xl"
+                className={`${isCopied ? "text-green-500" : "text-black"}`}
+              />
             </button>
           </div>
         </div>
