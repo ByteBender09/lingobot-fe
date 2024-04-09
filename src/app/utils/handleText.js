@@ -1,10 +1,10 @@
 import PizZip from "pizzip";
 import { DOMParser } from "@xmldom/xmldom";
-import { bool } from "prop-types";
 
 //Function Count Words From String
 export const countWords = (content) => {
-  if (!content.trim()) {
+  // Check if content is a string
+  if (typeof content !== "string" || !content.trim()) {
     return 0;
   }
   const words = content.trim().split(/\s+/);
@@ -88,4 +88,12 @@ export const createDocx = (content) => {
   element.download = "Output.txt";
   document.body.appendChild(element);
   element.click();
+};
+
+// Function convert to json
+export const convertStringToJson = (inputString) => {
+  console.log(inputString);
+  const parseArray = JSON.parse(inputString);
+  // console.log(parseArray);
+  return parseArray;
 };
