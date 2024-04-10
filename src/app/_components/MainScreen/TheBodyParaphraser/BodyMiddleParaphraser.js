@@ -34,20 +34,10 @@ export default function BodyMiddleParaphraser() {
   const fileInputRef = useRef(null);
   const timeoutRef = useRef(null);
 
+  //Handle split into smaller sentence to request
   const handleAnalysisInput = () => {
-    var sentences = content.split(".");
-
-    //Filter "?" in the text
-    for (var i = 0; i < sentences.length; i++) {
-      var temp = sentences[i].split("?");
-      sentences[i] = temp.join(".").trim(); // Gộp các mảnh câu lại và loại bỏ khoảng trắng thừa
-    }
-
-    //Filter "!" in the text
-    for (var i = 0; i < sentences.length; i++) {
-      var temp = sentences[i].split("!");
-      sentences[i] = temp.join(".").trim();
-    }
+    var sentences = content.split(/[\.\?\!]+/);
+    sentences = sentences.filter((sentence) => sentence.trim() !== "");
 
     setInput(sentences);
   };
