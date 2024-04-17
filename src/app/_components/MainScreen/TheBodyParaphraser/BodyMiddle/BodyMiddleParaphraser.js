@@ -1,44 +1,47 @@
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCloudArrowUp,
-  faTrash,
-  faCopy,
-  faDownload,
-  faChevronUp,
-  faChevronDown,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCloudArrowUp, faTrash } from "@fortawesome/free-solid-svg-icons";
 import {
   countWordsFromDocFile,
   getParagraphsFromDocFile,
-  saveToClipboard,
-  createDocx,
 } from "@/app/utils/handleText";
 import {
   handleParaphraseInput,
   handleGetSimilarMeanings,
 } from "@/app/utils/paraphrasing";
 import { useState, useRef, useEffect } from "react";
-import LoadingSpinner from "../../Others/spinner";
+import LoadingSpinner from "../../../Others/spinner";
+import { BodyMiddleTools } from "./BodyMiddleTools";
 
 export default function BodyMiddleParaphraser() {
   const [content, setContent] = useState("");
   const [input, setInput] = useState([]);
   const [output, setOutput] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  const [firstPromiseComplete, setFirstPromiseComplete] = useState(false);
+  const [secondPromiseComplete, setSecondPromiseComplete] = useState(false);
   const [processedSentences, setProcessedSentences] = useState({});
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [rephrasedSentences, setRephrasedSentences] = useState({});
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedWord, setSelectedWord] = useState("");
   const [showRephraseOptions, setShowRephraseOptions] = useState(0);
+  const [showSimilarWords, setShowSimilarWords] = useState(false);
+  const [finalRender, setFinalRender] = useState(0);
+  const [replaceWords, setRephaceWords] = useState([]);
   const fileInputRef = useRef(null);
   const timeoutRef = useRef(null);
+
+  const handleSimilarWords = (e, word) => {
+    e.stopPropagation();
+    setSelectedWord(word);
+    setShowSimilarWords(true);
+  };
 
   //Handle split into smaller sentence to request
   const handleAnalysisInput = () => {
     var sentences = content.split(/[\.\?\!]+/);
     sentences = sentences.filter((sentence) => sentence.trim() !== "");
-
     setInput(sentences);
   };
 
@@ -65,15 +68,6 @@ export default function BodyMiddleParaphraser() {
     updateOutput(activeIndex, replacement);
     setActiveIndex(null);
     setShowRephraseOptions(0);
-  };
-
-  //Handle save output to clipboard
-  const handleSaveToClipboard = () => {
-    setIsCopied(true);
-    saveToClipboard(output);
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 2000);
   };
 
   //Upload text from a docx fiile
@@ -103,7 +97,7 @@ export default function BodyMiddleParaphraser() {
 
   //Handle increase/ decrease active sentence index
   const increaseIndexActiveSentence = () => {
-    if (activeIndex < output.length) {
+    if (activeIndex < output.length - 1) {
       setActiveIndex((prevIndex) => prevIndex + 1);
     } else setActiveIndex(output.length - 1);
     setShowRephraseOptions(1);
@@ -124,60 +118,65 @@ export default function BodyMiddleParaphraser() {
     }, 3000);
   };
 
+  //Get list alternavite words
+  const getAlternativeWords = (phrase) => {
+    const cleanedWord = phrase.replace(/[.,]/g, "");
+    // console.log(phrase);
+    for (const phrases of replaceWords) {
+      console.log(phrases);
+      for (const item of phrases) {
+        if (item.text === cleanedWord)
+          return item.alts.filter((word) => word !== cleanedWord);
+      }
+    }
+    return [];
+  };
+
+  //Function to replace a phrase
+  const rephrasePhrase = (alternative, phraseIndex, index) => {
+    setRephaceWords((prev) => {
+      const updatedReplaceWords = [...prev];
+      updatedReplaceWords[phraseIndex][index].text = alternative;
+      return updatedReplaceWords;
+    });
+  };
+
+  //Handle when input change => Get Similar meaning sentences
   useEffect(() => {
     if (input.length === 0) return;
-
     setOutput(input);
     setIsLoading(true);
 
-    // Create an array of promises for each API call
+    let resolvedPromisesCount = 0;
+
     const promises = input.map((sentence, index) => {
       if (sentence.trim() === "") return;
 
-      // Check if the sentence has been processed before
       if (processedSentences.hasOwnProperty(sentence)) {
+        setFinalRender(0);
         const randomIndex = Math.floor(
           Math.random() * processedSentences[sentence].length
         );
         updateOutput(index, processedSentences[sentence][randomIndex]);
+        resolvedPromisesCount++;
       } else {
-        // If not, make an API call
         return handleParaphraseInput(sentence).then((result) => {
           setProcessedSentences((prevProcessedSentences) => ({
             ...prevProcessedSentences,
             [sentence]: result,
           }));
           updateOutput(index, result[0]);
-
-          // Get Similar letters from output
-          // const delay = (ms) =>
-          //   new Promise((resolve) => setTimeout(resolve, ms));
-
-          // result.forEach(async (sentence, index) => {
-          //   try {
-          //     await fetchSimilarPhrases(sentence);
-          //   } catch (error) {
-          //     if (error.response && error.response.status === 429) {
-          //       const retryAfter = error.response.headers["retry-after"];
-          //       console.log(
-          //         `Rate limit exceeded. Retrying after ${retryAfter} seconds.`
-          //       );
-          //       await delay(retryAfter * 1000);
-          //       // Retry the same sentence
-          //       await fetchSimilarPhrases(sentence);
-          //     } else {
-          //       console.error("Error calling OpenAI API:", error);
-          //     }
-          //   }
-          // });
+          resolvedPromisesCount++;
         });
       }
     });
 
-    // Wait for all API calls to complete
     Promise.all(promises)
       .then(() => {
         setIsLoading(false);
+        if (resolvedPromisesCount === input.length) {
+          setFirstPromiseComplete(true);
+        }
       })
       .catch((err) => {
         setIsLoading(false);
@@ -186,6 +185,71 @@ export default function BodyMiddleParaphraser() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input]);
 
+  //Handle when output change
+  useEffect(() => {
+    setFinalRender((prev) => prev + 1);
+    console.log(finalRender, input.length, output);
+
+    let resolvedPromisesCount = 0;
+
+    if (firstPromiseComplete) {
+      console.log("CC");
+      const promises = output.map((sentence) => {
+        if (typeof sentence == "string") {
+          if (!rephrasedSentences.hasOwnProperty(sentence.trim())) {
+            return handleGetSimilarMeanings(sentence).then((result) => {
+              //Store to reuse
+              setRephrasedSentences((prev) => ({
+                ...prev,
+                [sentence]: result,
+              }));
+              resolvedPromisesCount++;
+              return result;
+            });
+          } else {
+            resolvedPromisesCount++;
+            return Promise.resolve(rephrasedSentences[sentence]);
+          }
+        } else {
+          console.log(sentence);
+          resolvedPromisesCount++;
+          return Promise.resolve(sentence[0]);
+        }
+      });
+
+      Promise.all(promises)
+        .then((results) => {
+          console.log(results);
+          if (resolvedPromisesCount === output.length) {
+            setSecondPromiseComplete(true);
+          }
+          setFirstPromiseComplete(false);
+          setRephaceWords(results);
+        })
+        .catch((error) => {
+          console.error("Error calling API all sentences:", error);
+          setFirstPromiseComplete(false);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [output, input]);
+
+  useEffect(() => {
+    if (secondPromiseComplete) {
+      const isArrayofArrays = replaceWords.every(Array.isArray);
+      if (isArrayofArrays) {
+        setOutput(replaceWords);
+      }
+    }
+    console.log(replaceWords);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [replaceWords]);
+
+  useEffect(() => {
+    console.log(output);
+  }, [output]);
+
   return (
     <div
       className="flex
@@ -193,7 +257,7 @@ export default function BodyMiddleParaphraser() {
      flex-[1] justify-between items-start mt-5"
     >
       <div
-        className="flex flex-col h-full w-full flex-[1] 
+        className="flex flex-col h-full w-full flex-[1] min-w-0
       mr-0 md:mr-0 lg:mr-[0.5%] xl:mr-[0.5%] 2xl:mr-[0.5%]
       mb-2 md:mb-2 lg:mb-0 xl:mb-0 2xl:mb-0   
       text-sm font-light bg-white dark:bg-neutral-900 px-4 pt-[18px] pb-4 rounded-[17px]"
@@ -244,11 +308,14 @@ export default function BodyMiddleParaphraser() {
         </div>
       </div>
       <div
-        className="flex flex-col h-full w-full text-sm font-light flex-[1]
+        className="flex flex-col h-full w-full text-sm font-light flex-[1] min-w-0
        ml-0 md:ml-0 lg:ml-[0.5%] xl:ml-[0.5%] 2xl:ml-[0.5%]
         bg-white dark:bg-neutral-900 px-4 py-[18px] rounded-[17px]"
       >
-        <div className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2 font-medium">
+        <div
+          className="h-max inline gap-1 flex-[1] pr-1 bg-transparent text-black
+         dark:text-white leading-[30px] outline-none mb-2 font-medium text-wrap"
+        >
           {output.map((sentence, indexSentence) => {
             return (
               <span
@@ -257,24 +324,64 @@ export default function BodyMiddleParaphraser() {
                   sentence === input[indexSentence]
                     ? "text-gray-400"
                     : indexSentence === activeIndex
-                    ? "text-black dark:text-white bg-blue-50 hover:bg-blue-50 dark:hover:bg-neutral-800 cursor-pointer relative"
-                    : "text-black dark:text-white hover:bg-blue-50 dark:hover:bg-neutral-800 cursor-pointer relative"
+                    ? "text-black h-max dark:text-white bg-blue-50 dark:bg-neutral-800 hover:bg-blue-50 dark:hover:bg-neutral-800 cursor-pointer relative inline gap-1"
+                    : "text-black h-max dark:text-white hover:bg-blue-50 dark:hover:bg-neutral-800 cursor-pointer relative inline gap-1"
                 }
                 onClick={() => handleOpenRephraseButton(indexSentence)}
               >
-                {sentence
-                  .trim()
-                  .split(" ")
-                  .map((word, wordIndex) => {
+                {typeof sentence === "string" ? (
+                  <span className="hover:text-blue-700 dark:hover:text-blue-400 relative">
+                    {sentence}
+                  </span>
+                ) : (
+                  sentence?.map((phrase, phraseIndex) => {
                     return (
                       <span
-                        key={wordIndex}
-                        className="hover:text-blue-700 dark:hover:text-blue-400"
+                        key={phraseIndex}
+                        className="hover:text-blue-700 dark:hover:text-blue-400 relative text-wrap"
+                        onClick={(e) => handleSimilarWords(e, phrase.text)}
                       >
-                        {word}{" "}
+                        {phrase.text}{" "}
+                        {phrase.text === selectedWord && showSimilarWords && (
+                          <span
+                            className="absolute top-[24px] left-0 w-max bg-white dark:bg-neutral-800
+                         border border-gray-300 dark:border-black p-2 rounded-lg shadow-lg z-10"
+                          >
+                            <ul>
+                              {getAlternativeWords(phrase.text) &&
+                                getAlternativeWords(phrase.text).map(
+                                  (alternative, index) => (
+                                    <li
+                                      key={index}
+                                      className="cursor-pointer text-black dark:text-white hover:bg-gray-200 dark:hover:bg-black rounded-md px-1"
+                                      onClick={() =>
+                                        rephrasePhrase(
+                                          alternative,
+                                          indexSentence,
+                                          phraseIndex
+                                        )
+                                      }
+                                    >
+                                      {alternative}
+                                    </li>
+                                  )
+                                )}
+                            </ul>
+                            <button
+                              className="mt-2 p-1 w-full text-black dark:text-white bg-gray-200 dark:bg-black hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowSimilarWords(false);
+                              }}
+                            >
+                              Close
+                            </button>
+                          </span>
+                        )}
                       </span>
                     );
-                  })}
+                  })
+                )}
                 {indexSentence !== output.length - 1 && " "}
                 {showRephraseOptions === 1 && activeIndex == indexSentence && (
                   <div
@@ -291,8 +398,8 @@ export default function BodyMiddleParaphraser() {
                 )}
                 {showRephraseOptions === 2 && activeIndex == indexSentence && (
                   <div
-                    className="absolute top-[20px] w-max bg-white dark:bg-neutral-800
-                   border border-gray-300 dark:border-black p-2 rounded-lg shadow-lg"
+                    className="absolute top-[30px] w-max bg-white dark:bg-neutral-800
+                   border border-gray-300 dark:border-black p-2 rounded-lg shadow-lg z-20"
                   >
                     <ul>
                       {processedSentences.hasOwnProperty(input[activeIndex]) &&
@@ -320,47 +427,12 @@ export default function BodyMiddleParaphraser() {
             );
           })}
         </div>
-        <div
-          className="hidden md:flex lg:flex xl:flex 2xl:flex 
-        items-center justify-between text-black dark:text-white"
-        >
-          <div className="flex items-center">
-            <button
-              className="w-10 h-[35px] hidden md:hidden lg:hidden xl:flex 2xl:flex items-center justify-center
-             bg-zinc-100 dark:bg-neutral-800 rounded mr-[5px] hover:bg-zinc-300 dark:hover:bg-neutral-700"
-              onClick={decreaseIndexActiveSentence}
-            >
-              <FontAwesomeIcon icon={faChevronUp} />
-            </button>
-            <button
-              className="w-10 h-[35px] hidden md:hidden lg:hidden xl:flex 2xl:flex items-center
-             justify-center bg-zinc-100 dark:bg-neutral-800 rounded mr-5 hover:bg-zinc-300 dark:hover:bg-neutral-700"
-              onClick={increaseIndexActiveSentence}
-            >
-              <FontAwesomeIcon icon={faChevronDown} />
-            </button>
-            <div className="flex">
-              <span className="hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block">
-                {activeIndex ? activeIndex + 1 : 1}/{output.length} Sentences •
-              </span>
-              <span>&nbsp;{countWordsFromDocFile(output)} Words</span>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <button onClick={() => createDocx(output)}>
-              <FontAwesomeIcon icon={faDownload} size="xl" />
-            </button>
-            <button className="ml-3" onClick={handleSaveToClipboard}>
-              <FontAwesomeIcon
-                icon={faCopy}
-                size="xl"
-                className={`${
-                  isCopied ? "text-green-500" : "text-black dark:text-white"
-                }`}
-              />
-            </button>
-          </div>
-        </div>
+        <BodyMiddleTools
+          decreaseIndexActiveSentence={decreaseIndexActiveSentence}
+          increaseIndexActiveSentence={increaseIndexActiveSentence}
+          activeIndex={activeIndex}
+          output={output}
+        />
       </div>
     </div>
   );

@@ -34,6 +34,22 @@ export const countWordsFromDocFile = (contentArray) => {
   return words.length;
 };
 
+//Function Count Words Output
+export const countWordsOutput = (output) => {
+  let wordCount = 0;
+
+  for (const arr of output) {
+    for (const item of arr) {
+      if (item && item.text) {
+        const words = item.text.split(/\s+/);
+        wordCount += words.length;
+      }
+    }
+  }
+
+  return wordCount;
+};
+
 const str2xml = (str) => {
   if (str.charCodeAt(0) === 65279) {
     // BOM sequence
@@ -92,8 +108,15 @@ export const createDocx = (content) => {
 
 // Function convert to json
 export const convertStringToJson = (inputString) => {
-  console.log(inputString);
-  const parseArray = JSON.parse(inputString);
-  // console.log(parseArray);
+  let filteredString = inputString;
+  if (inputString.includes(".")) {
+    filteredString = inputString.replace(".", "");
+  }
+  let parseArray = null;
+  try {
+    parseArray = JSON.parse(filteredString);
+  } catch (error) {
+    console.error("Error parsing JSON:", error);
+  }
   return parseArray;
 };

@@ -1,5 +1,5 @@
 import BodyHeadingParaphraser from "./BodyHeadingParaphaser";
-import BodyMiddleParaphraser from "./BodyMiddleParaphraser";
+import BodyMiddleParaphraser from "./BodyMiddle/BodyMiddleParaphraser";
 import BodyFootingParaphraser from "./BodyFootingParaphraser";
 
 export default function TheBodyParaphraser() {

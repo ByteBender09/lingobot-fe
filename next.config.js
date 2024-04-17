@@ -1,10 +1,11 @@
-/** @type {import('next').NextConfig} */
 module.exports = {
-  webpack: (config) => {
-    config.resolve.fallback = {
-      fs: false,
-    };
-
-    return config;
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/auth/login",
+        permanent: true,
+      },
+    ];
   },
 };

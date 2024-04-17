@@ -17,6 +17,22 @@ const listModels = [
     title: "Formal",
     active: false,
   },
+  {
+    title: "Academy",
+    active: false,
+  },
+  {
+    title: "Creative",
+    active: false,
+  },
+  {
+    title: "Simple",
+    active: false,
+  },
+  {
+    title: "Shorten",
+    active: false,
+  },
 ];
 
 export default function BodyHeadingParaphraser() {
@@ -24,12 +40,6 @@ export default function BodyHeadingParaphraser() {
   const [linePosition, setLinePosition] = useState(0);
   const [lineWidth, setLineWidth] = useState(0);
   const lineRef = useRef([]);
-
-  const [sliderValue, setSliderValue] = useState(30);
-
-  const handleSliderChange = (event) => {
-    setSliderValue(event.target.value);
-  };
 
   const handleModelClick = (index) => {
     setActiveIndex(index);
@@ -91,18 +101,6 @@ export default function BodyHeadingParaphraser() {
               }}
             ></div>
           </div>
-        </div>
-        <div className="hidden md:hidden lg:flex xl:flex 2xl:flex">
-          <h3 className="text-[15px] font-medium">Synonyms:</h3>
-          <input
-            type="range"
-            min="0"
-            max="90"
-            step={30}
-            value={sliderValue}
-            onChange={handleSliderChange}
-            className="ml-2 range-slider"
-          />
         </div>
       </div>
     </div>
