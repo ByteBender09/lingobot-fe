@@ -1,77 +1,69 @@
 "use client";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
-import { SubExplain1, SubExplain2 } from "./subExplains";
+import { memo } from "react";
+import { SubExplain1 } from "./subExplains";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 import OptionItem from "../payOptionItem";
-import FormPayment from "./formPayment";
+import useAxios from "@/app/(pages)/hooks/useAxios";
+import useAxiosPrivate from "@/app/(pages)/hooks/useAxiosPrivate";
 
-export default function LeftPart() {
-  const [partPayment, setPartPayment] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
+const LeftPart = () => {
+  const axiosPrivate = useAxiosPrivate();
+  const router = useRouter();
+  const [dataSubscribtionPlans, ,] = useAxios(
+    "get",
+    "/payment/subscription-plan/plan/",
+    {},
+    {},
+    []
+  );
 
   const handleOptionSelect = (option) => {
-    setSelectedOption(option);
-    setPartPayment(true);
+    axiosPrivate
+      .post("/payment/create-checkout-session/", {
+        subscription_plan_id: option.id,
+        quantity: 1,
+      })
+      .then((res) => {
+        router.push(res.data.data.url);
+      })
+      .catch((err) => {
+        console.log(err);
+        Swal.fire({
+          title: "You are in premium mode!",
+          icon: "error",
+          timer: 4000,
+        });
+      });
   };
-
   return (
     <div
       className="flex flex-[1] flex-col items-center 
     ml-0 md:ml-0 lg:ml-12 xl:ml-12 2xl:ml-12
     mb-8 md:mb-8 lg:mb-0 xl:mb-0 2xl:mb-0"
     >
-      {!partPayment ? (
-        <>
-          <h2 className="text-black dark:text-white text-[26px] font-normal mb-5">
-            Select your plan
-          </h2>
-          <div className="w-full">
+      <>
+        <h2 className="text-black dark:text-white text-[26px] font-normal mb-5">
+          Select your plan
+        </h2>
+        <div className="w-full">
+          {dataSubscribtionPlans?.data?.PREMIUM.map((item, index) => (
             <OptionItem
-              firstChild={true}
-              title="Annual"
-              saleTitle="Save 58%"
-              pricePerTime="$4.17"
-              pricePerTimeDes="USD per month"
-              totalPrice="$49.95"
-              timeDuration="billed every 12 months"
+              key={index}
+              id={item.id}
+              firstChild={index === 0}
+              title={item.display_name}
+              pricePerTime={item.price_per_plan}
+              duration={item.duration}
               onSelect={handleOptionSelect}
             />
-            <OptionItem
-              title="Semi"
-              saleTitle="Save 33%"
-              pricePerTime="$6.66"
-              pricePerTimeDes="USD per month"
-              totalPrice="$39.95"
-              timeDuration="billed every 6 months"
-              onSelect={handleOptionSelect}
-            />
-            <OptionItem
-              title="Monthly"
-              pricePerTime="$9.95"
-              pricePerTimeDes="USD billed monthly"
-              onSelect={handleOptionSelect}
-            />
-          </div>
-          <SubExplain1 />
-        </>
-      ) : (
-        <>
-          <div className="flex w-full justify-center items-center relative mb-5">
-            <FontAwesomeIcon
-              icon={faChevronLeft}
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 dark:text-white cursor-pointer"
-              onClick={() => setPartPayment(false)}
-            />
-            <h2 className="text-black dark:text-white text-[26px] font-normal">
-              {selectedOption?.title} Plan Selected
-            </h2>
-          </div>
-          <FormPayment selectedOption={selectedOption} />
-          <SubExplain2 />
-        </>
-      )}
+          ))}
+        </div>
+        <SubExplain1 />
+      </>
     </div>
   );
-}
+};
+
+export default memo(LeftPart);

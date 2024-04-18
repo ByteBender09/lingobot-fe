@@ -1,21 +1,17 @@
 export default function OptionItem({
   firstChild = false,
+  id,
   title,
-  saleTitle,
   pricePerTime,
-  pricePerTimeDes,
-  totalPrice,
-  timeDuration,
+  duration,
   onSelect,
 }) {
   const handleItemClick = () => {
     onSelect({
+      id,
       title,
-      saleTitle,
       pricePerTime,
-      pricePerTimeDes,
-      totalPrice,
-      timeDuration,
+      duration,
     });
   };
 
@@ -27,40 +23,21 @@ export default function OptionItem({
       cursor-pointer px-6 rounded-[38px] mb-5`}
     >
       <div
-        className="flex flex-col items-center justify-center 
+        className="flex items-center justify-center w-1/5
         px-2 md:px-2 lg:px-6 xl:px-6 2xl:px-6
-        border-r border-neutral-200"
+        border-r border-neutral-200 text-center text-black dark:text-white text-sm font-normal"
       >
-        <p className="text-center text-black dark:text-white text-sm font-normal">
-          {title}
-        </p>
-        {saleTitle ? (
-          <span
-            className={`text-[11px] font-medium ${
-              firstChild ? "text-sky-600" : "text-black"
-            }`}
-          >
-            {saleTitle}
-          </span>
-        ) : (
-          ""
-        )}
+        {title}
       </div>
       <div
         className="flex flex-col items-start justify-center 
         px-4 md:px-4 lg:px-10 xl:px-10 2xl:px-10"
       >
         <span className="text-black dark:text-white text-xs font-normal mb-1">
-          <strong className="text-sm font-medium">{pricePerTime} </strong>
-          {pricePerTimeDes}
+          <strong className="text-sm font-medium">${pricePerTime} </strong>
+          USD per{" "}
+          {duration == 1 ? `${duration} per month` : `with ${duration} months`}
         </span>
-        {totalPrice ? (
-          <span className="text-black dark:text-white text-[10px] font-light">
-            {totalPrice} {timeDuration}
-          </span>
-        ) : (
-          ""
-        )}
       </div>
       <div
         className="flex items-center justify-end 

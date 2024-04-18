@@ -36,21 +36,3 @@ export function SubExplain1() {
     </>
   );
 }
-
-export function SubExplain2() {
-  return (
-    <div className="flex flex-col items-start mt-5">
-      <span className="text-zinc-800 dark:text-white text-[11px] font-light mb-5">
-        Your subscription will automatically renew every12 months. You will be
-        charged $49.95 USD on each renewal until you cancel your subscription.
-        If you cancel, previous charges will not be refunded, but you may
-        continue to use the service until the end of the term you paid for.
-      </span>
-      <span className="text-zinc-800 dark:text-white text-[11px] font-light">
-        By clicking the &quot;Check out&quot; button above, you agree to our{" "}
-        <strong className="text-blue-500">Terms of Service</strong> and have
-        read our <strong className="text-blue-500">Privacy Policy</strong>
-      </span>
-    </div>
-  );
-}

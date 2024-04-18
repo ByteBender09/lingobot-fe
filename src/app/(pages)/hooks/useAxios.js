@@ -35,7 +35,8 @@ const useAxios = (method, api, body, options, deps) => {
         setLoading(false);
       }
     };
-  }, [api, axiosController, body, isLoading, method, options]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...deps]);
 
   return [response, error, isLoading];
 };
