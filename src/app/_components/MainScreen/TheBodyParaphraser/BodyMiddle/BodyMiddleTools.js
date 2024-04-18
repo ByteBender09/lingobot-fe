@@ -13,6 +13,8 @@ import {
   countWordsOutput,
   saveToClipboard,
 } from "@/app/utils/handleText";
+
+import { useKeyDown } from "@/app/(pages)/hooks/useKeyDown";
 import { useState } from "react";
 
 export const BodyMiddleTools = ({
@@ -22,6 +24,12 @@ export const BodyMiddleTools = ({
   output,
 }) => {
   const [isCopied, setIsCopied] = useState(false);
+
+  useKeyDown((e) => {
+    if (e.altKey && e.key === "c") {
+      handleSaveToClipboard();
+    }
+  }, []);
 
   //Handle save output to clipboard
   const handleSaveToClipboard = () => {
@@ -76,7 +84,8 @@ export const BodyMiddleTools = ({
         </button>
         <div className="flex">
           <span className="hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block">
-            {activeIndex + 1}/{output.length} Sentences •
+            {output.length != 0 ? activeIndex + 1 : activeIndex}/{output.length}{" "}
+            Sentences •
           </span>
           <span>&nbsp;{countWordsOutput(output)} Words</span>
         </div>

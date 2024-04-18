@@ -10,16 +10,12 @@ import { useState } from "react";
 
 const hotkeyTitles = [
   {
-    title: "Copy sentence",
+    title: "Copy output",
     action: "Alt + C",
   },
   {
     title: "Paraphrase all text",
     action: "Ctrl + Enter",
-  },
-  {
-    title: "Copy all paraphrased text",
-    action: "Ctrl + C",
   },
 ];
 

@@ -11,8 +11,9 @@ import {
   handleGetSimilarMeanings,
 } from "@/app/utils/paraphrasing";
 import { useState, useRef, useEffect } from "react";
-import LoadingSpinner from "../../../Others/spinner";
+import { useKeyDown } from "@/app/(pages)/hooks/useKeyDown";
 import { BodyMiddleTools } from "./BodyMiddleTools";
+import LoadingSpinner from "../../../Others/spinner";
 
 export default function BodyMiddleParaphraser() {
   const [content, setContent] = useState("");
@@ -132,7 +133,6 @@ export default function BodyMiddleParaphraser() {
   //Get list alternavite words
   const getAlternativeWords = (phrase) => {
     for (const phrases of replaceWords) {
-      // console.log(phrases);
       for (const item of phrases) {
         if (item.text === phrase)
           return item.alts.filter((word) => word !== phrase);
@@ -198,7 +198,6 @@ export default function BodyMiddleParaphraser() {
     let resolvedPromisesCount = 0;
 
     if (firstPromiseComplete) {
-      console.log("CC");
       const promises = output.map((sentence) => {
         if (typeof sentence == "string") {
           if (!rephrasedSentences.hasOwnProperty(sentence.trim())) {
@@ -216,7 +215,6 @@ export default function BodyMiddleParaphraser() {
             return Promise.resolve(rephrasedSentences[sentence]);
           }
         } else {
-          console.log(sentence);
           resolvedPromisesCount++;
           return Promise.resolve(sentence[0]);
         }
@@ -246,10 +244,14 @@ export default function BodyMiddleParaphraser() {
         setOutput(replaceWords);
       }
     }
-    // console.log(replaceWords);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [replaceWords]);
+
+  useKeyDown((e) => {
+    if (e.ctrlKey && e.key === "Enter") {
+      handleAnalysisInput();
+    }
+  }, []);
 
   useEffect(() => {
     console.log(output);
