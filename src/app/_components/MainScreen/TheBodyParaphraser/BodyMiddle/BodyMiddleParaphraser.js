@@ -27,7 +27,6 @@ export default function BodyMiddleParaphraser() {
   const [selectedWord, setSelectedWord] = useState("");
   const [showRephraseOptions, setShowRephraseOptions] = useState(0);
   const [showSimilarWords, setShowSimilarWords] = useState(false);
-  const [finalRender, setFinalRender] = useState(0);
   const [replaceWords, setRephaceWords] = useState([]);
   const fileInputRef = useRef(null);
   const timeoutRef = useRef(null);
@@ -63,9 +62,21 @@ export default function BodyMiddleParaphraser() {
   };
 
   //Handle replace sentence
-  const handleReplaceWord = (replacement) => {
+  const handleReplaceSentence = (replacement) => {
     clearTimeout(timeoutRef.current);
     updateOutput(activeIndex, replacement);
+    if (!rephrasedSentences.hasOwnProperty(replacement.trim())) {
+      handleGetSimilarMeanings(replacement).then((result) => {
+        //Store to reuse
+        setRephrasedSentences((prev) => ({
+          ...prev,
+          [replacement]: result,
+        }));
+        updateOutput(activeIndex, result);
+      });
+    } else {
+      updateOutput(activeIndex, rephrasedSentences[replacement]);
+    }
     setActiveIndex(null);
     setShowRephraseOptions(0);
   };
@@ -120,13 +131,11 @@ export default function BodyMiddleParaphraser() {
 
   //Get list alternavite words
   const getAlternativeWords = (phrase) => {
-    const cleanedWord = phrase.replace(/[.,]/g, "");
-    // console.log(phrase);
     for (const phrases of replaceWords) {
-      console.log(phrases);
+      // console.log(phrases);
       for (const item of phrases) {
-        if (item.text === cleanedWord)
-          return item.alts.filter((word) => word !== cleanedWord);
+        if (item.text === phrase)
+          return item.alts.filter((word) => word !== phrase);
       }
     }
     return [];
@@ -153,7 +162,6 @@ export default function BodyMiddleParaphraser() {
       if (sentence.trim() === "") return;
 
       if (processedSentences.hasOwnProperty(sentence)) {
-        setFinalRender(0);
         const randomIndex = Math.floor(
           Math.random() * processedSentences[sentence].length
         );
@@ -187,9 +195,6 @@ export default function BodyMiddleParaphraser() {
 
   //Handle when output change
   useEffect(() => {
-    setFinalRender((prev) => prev + 1);
-    console.log(finalRender, input.length, output);
-
     let resolvedPromisesCount = 0;
 
     if (firstPromiseComplete) {
@@ -219,7 +224,7 @@ export default function BodyMiddleParaphraser() {
 
       Promise.all(promises)
         .then((results) => {
-          console.log(results);
+          // console.log(results);
           if (resolvedPromisesCount === output.length) {
             setSecondPromiseComplete(true);
           }
@@ -241,7 +246,7 @@ export default function BodyMiddleParaphraser() {
         setOutput(replaceWords);
       }
     }
-    console.log(replaceWords);
+    // console.log(replaceWords);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [replaceWords]);
@@ -398,7 +403,7 @@ export default function BodyMiddleParaphraser() {
                 )}
                 {showRephraseOptions === 2 && activeIndex == indexSentence && (
                   <div
-                    className="absolute top-[30px] w-max bg-white dark:bg-neutral-800
+                    className="absolute top-[30px] left-0 w-max bg-white dark:bg-neutral-800
                    border border-gray-300 dark:border-black p-2 rounded-lg shadow-lg z-20"
                   >
                     <ul>
@@ -407,7 +412,7 @@ export default function BodyMiddleParaphraser() {
                           (replacement, replacementIndex) => (
                             <li
                               key={replacementIndex}
-                              onClick={() => handleReplaceWord(replacement)}
+                              onClick={() => handleReplaceSentence(replacement)}
                               className="cursor-pointer hover:bg-gray-200 dark:hover:bg-black p-1 rounded-md px-2"
                             >
                               {replacement}

@@ -106,16 +106,38 @@ export const createDocx = (content) => {
   element.click();
 };
 
+const fixJsonSyntax = (inputString) => {
+  // Tìm tất cả các mẫu của phần tử mảng bằng biểu thức chính quy
+  const arrayItemsRegex = /\{[^{}]*\}/g;
+  const arrayItemsMatches = inputString.match(arrayItemsRegex);
+
+  if (!arrayItemsMatches) {
+    // Nếu không tìm thấy bất kỳ phần tử mảng nào, trả về chuỗi không thay đổi
+    return inputString;
+  }
+
+  // Kết hợp các phần tử mảng đã tìm được thành một chuỗi mới
+  const fixedString = "[" + arrayItemsMatches.join(",") + "]";
+
+  return fixedString;
+};
+
 // Function convert to json
 export const convertStringToJson = (inputString) => {
   let filteredString = inputString;
-  if (inputString.includes(".")) {
-    filteredString = inputString.replace(".", "");
+  if (inputString.endsWith(".")) {
+    filteredString = inputString.replace(/\.$/, "");
   }
+
+  //Fix when meet error
+  const fixedString = fixJsonSyntax(filteredString);
   let parseArray = null;
   try {
-    parseArray = JSON.parse(filteredString);
+    parseArray = JSON.parse(fixedString);
   } catch (error) {
+    console.log(filteredString);
+    console.log(fixedString);
+
     console.error("Error parsing JSON:", error);
   }
   return parseArray;
