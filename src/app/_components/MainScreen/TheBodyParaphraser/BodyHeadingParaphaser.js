@@ -1,73 +1,61 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-
-const languages = [{ name: "English (US)", active: true }];
-
-const listModels = [
-  {
-    title: "Standard",
-    active: true,
-  },
-  {
-    title: "Fluency",
-    active: false,
-  },
-  {
-    title: "Formal",
-    active: false,
-  },
-  {
-    title: "Academy",
-    active: false,
-  },
-  {
-    title: "Creative",
-    active: false,
-  },
-  {
-    title: "Simple",
-    active: false,
-  },
-  {
-    title: "Shorten",
-    active: false,
-  },
-];
+import { useState, useRef, useEffect, useContext } from "react";
+import { ModelStateContext } from "@/app/Context/ModelStateContext";
+import { LISTSTYLES, MODELTYPE, SUBSCRIBTION } from "@/app/const";
+import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
+import Swal from "sweetalert2";
 
 export default function BodyHeadingParaphraser() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const {
+    activeStyleIndex,
+    setActiveStyleIndex,
+    selectedOption,
+    setSelectedOption,
+  } = useContext(ModelStateContext);
+
+  const { subscribtion } = useContext(CurrentSubscribtionContext);
+
   const [linePosition, setLinePosition] = useState(0);
   const [lineWidth, setLineWidth] = useState(0);
   const lineRef = useRef([]);
 
-  const handleModelClick = (index) => {
-    setActiveIndex(index);
+  const handleChangeModal = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const handleTextStyleClick = (index) => {
+    if (subscribtion === SUBSCRIBTION.PREMIUM) setActiveStyleIndex(index);
+    if (subscribtion === SUBSCRIBTION.FREE && index < 2)
+      setActiveStyleIndex(index);
+    else {
+      Swal.fire({
+        title: "Only available for premium users!",
+        icon: "warning",
+        timer: 2000,
+      });
+    }
   };
 
   useEffect(() => {
-    const activeButton = lineRef.current.childNodes[activeIndex];
+    const activeButton = lineRef.current.childNodes[activeStyleIndex];
     if (activeButton) {
       const buttonRect = activeButton.getBoundingClientRect();
       const containerRect = lineRef.current.getBoundingClientRect();
       setLinePosition(buttonRect.left - containerRect.left);
       setLineWidth(buttonRect.width);
     }
-  }, [activeIndex]);
+  }, [activeStyleIndex]);
 
   return (
     <div className="text-black dark:text-white">
       <div className="hidden md:flex lg:flex xl:flex 2xl:flex items-center text-[15px] font-light">
-        {languages.map((lang, index) => (
-          <button
-            key={index}
-            className={`py-2 px-4 h-10 rounded-tl-[15px] rounded-tr-[15px] 
-            ${lang.active ? "bg-white dark:bg-neutral-900" : ""} 
-            flex items-center justify-center`}
-          >
-            {lang.name}
-          </button>
-        ))}
+        <button
+          className="py-2 px-4 h-10 rounded-tl-[15px] rounded-tr-[15px] 
+            bg-white dark:bg-neutral-900 flex items-center justify-center"
+        >
+          English (US)
+        </button>
       </div>
       <div
         className="flex px-7 h-[43px] w-full items-center 
@@ -80,16 +68,16 @@ export default function BodyHeadingParaphraser() {
             className="text-[15px] font-medium mr-6
           hidden md:block lg:block xl:block 2xl:block"
           >
-            Models:
+            Styles:
           </h3>
           <div className="flex h-full relative" ref={lineRef}>
-            {listModels.map((item, index) => (
+            {LISTSTYLES.map((item, index) => (
               <button
                 key={index}
                 className="mx-4 h-full mr-2 text-[15px] font-light relative"
-                onClick={() => handleModelClick(index)}
+                onClick={() => handleTextStyleClick(index)}
               >
-                {item.title}
+                {item}
               </button>
             ))}
             <div
@@ -102,6 +90,20 @@ export default function BodyHeadingParaphraser() {
             ></div>
           </div>
         </div>
+        {(activeStyleIndex == 0 || activeStyleIndex == 1) && (
+          <div className="hidden md:hidden lg:flex xl:flex 2xl:flex items-center">
+            <h3 className="text-[15px] font-medium">Model:</h3>
+            <select
+              className="ml-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block 
+            dark:text-white w-full p-2 dark:bg-neutral-800 dark:border-gray-600 outline-none"
+              value={selectedOption}
+              onChange={handleChangeModal}
+            >
+              <option value="option1">{MODELTYPE.T5}</option>
+              <option value="option2">{MODELTYPE.MISTRAL}</option>
+            </select>
+          </div>
+        )}
       </div>
     </div>
   );

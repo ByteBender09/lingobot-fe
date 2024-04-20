@@ -20,6 +20,7 @@ const useAxiosPrivate = () => {
     const responseIntercept = axiosPrivate.interceptors.response.use(
       (response) => response,
       async (error) => {
+        console.log(error);
         const prevRequest = error.config;
         if (error.response.status === 403) {
           const newAccessToken = await refresh();

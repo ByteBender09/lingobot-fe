@@ -142,3 +142,10 @@ export const convertStringToJson = (inputString) => {
   }
   return parseArray;
 };
+
+// Function to truncate content
+export const truncateContent = (content, limit) => {
+  const words = content.split(/\s+/);
+  const truncatedWords = words.slice(0, limit);
+  return truncatedWords.join(" ");
+};

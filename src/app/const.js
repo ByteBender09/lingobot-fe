@@ -41,3 +41,17 @@ export const specificServiceItems = [
   "Compare Modes",
   "Paraphraser History",
 ];
+
+export const LISTSTYLES = [
+  "Standard",
+  "Fluency",
+  "Formal",
+  "Academy",
+  "Creative",
+  "Simple",
+  "Shorten",
+];
+
+export const MODELTYPE = { T5: "T5", MISTRAL: "MISTRAL" };
+
+export const SUBSCRIBTION = { FREE: "FREE", PREMIUM: "PREMIUM" };

@@ -5,17 +5,26 @@ import { faCloudArrowUp, faTrash } from "@fortawesome/free-solid-svg-icons";
 import {
   countWordsFromDocFile,
   getParagraphsFromDocFile,
+  truncateContent,
 } from "@/app/utils/handleText";
 import {
   handleParaphraseInput,
   handleGetSimilarMeanings,
 } from "@/app/utils/paraphrasing";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { useKeyDown } from "@/app/(pages)/hooks/useKeyDown";
 import { BodyMiddleTools } from "./BodyMiddleTools";
+import { ModelStateContext } from "@/app/Context/ModelStateContext";
+import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
+import { LISTSTYLES, SUBSCRIBTION } from "@/app/const";
 import LoadingSpinner from "../../../Others/spinner";
+import Swal from "sweetalert2";
 
 export default function BodyMiddleParaphraser() {
+  const { activeStyleIndex, selectedOption } = useContext(ModelStateContext);
+  const { subscribtion } = useContext(CurrentSubscribtionContext);
+  const [textStyle, setTextStyle] = useState(LISTSTYLES[activeStyleIndex]);
+  const [modelType, setModelType] = useState(selectedOption);
   const [content, setContent] = useState("");
   const [input, setInput] = useState([]);
   const [output, setOutput] = useState([]);
@@ -32,17 +41,37 @@ export default function BodyMiddleParaphraser() {
   const fileInputRef = useRef(null);
   const timeoutRef = useRef(null);
 
+  //Handle change content user input
+  const handleChangeContent = (value) => {
+    let content = value;
+
+    if (Array.isArray(value)) {
+      content = value.join(" ");
+    }
+
+    if (subscribtion === SUBSCRIBTION.PREMIUM) {
+      setContent(content);
+    } else {
+      const wordCount = countWordsFromDocFile(content);
+      if (wordCount > 100) {
+        Swal.fire({
+          title: "Limit 100 words for free",
+          icon: "warning",
+          timer: 2000,
+        });
+        const truncatedContent = truncateContent(content, 100);
+        setContent(truncatedContent);
+      } else {
+        setContent(content);
+      }
+    }
+  };
+
+  //Handle when open similar words modal
   const handleSimilarWords = (e, word) => {
     e.stopPropagation();
     setSelectedWord(word);
     setShowSimilarWords(true);
-  };
-
-  //Handle split into smaller sentence to request
-  const handleAnalysisInput = () => {
-    var sentences = content.split(/[\.\?\!]+/);
-    sentences = sentences.filter((sentence) => sentence.trim() !== "");
-    setInput(sentences);
   };
 
   //Handle show rephrase button
@@ -90,7 +119,7 @@ export default function BodyMiddleParaphraser() {
     reader.onload = (e) => {
       const content = e.target.result;
       const paragraphs = getParagraphsFromDocFile(content);
-      setContent(paragraphs);
+      handleChangeContent(paragraphs);
     };
 
     reader.onerror = (err) => console.error(err);
@@ -150,10 +179,27 @@ export default function BodyMiddleParaphraser() {
     });
   };
 
+  //Handle split into smaller sentence to request
+  const handleAnalysisInput = () => {
+    var sentences = content.split(/[\.\?\!]+/);
+    sentences = sentences.filter((sentence) => sentence.trim() !== "");
+    setInput(sentences);
+
+    //Init when change model
+    setTextStyle(LISTSTYLES[activeStyleIndex]);
+    setModelType(selectedOption);
+  };
+
+  //When text style change => reset output
+  useEffect(() => {
+    setOutput([]);
+  }, [textStyle, modelType]);
+
   //Handle when input change => Get Similar meaning sentences
   useEffect(() => {
     if (input.length === 0) return;
     setOutput(input);
+    console.log("WHEN CLICK REPHRASE", output);
     setIsLoading(true);
 
     let resolvedPromisesCount = 0;
@@ -168,14 +214,16 @@ export default function BodyMiddleParaphraser() {
         updateOutput(index, processedSentences[sentence][randomIndex]);
         resolvedPromisesCount++;
       } else {
-        return handleParaphraseInput(sentence).then((result) => {
-          setProcessedSentences((prevProcessedSentences) => ({
-            ...prevProcessedSentences,
-            [sentence]: result,
-          }));
-          updateOutput(index, result[0]);
-          resolvedPromisesCount++;
-        });
+        return handleParaphraseInput(sentence, textStyle, modelType).then(
+          (result) => {
+            setProcessedSentences((prevProcessedSentences) => ({
+              ...prevProcessedSentences,
+              [sentence]: result,
+            }));
+            updateOutput(index, result[0]);
+            resolvedPromisesCount++;
+          }
+        );
       }
     });
 
@@ -191,13 +239,13 @@ export default function BodyMiddleParaphraser() {
         console.error(err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input]);
+  }, [input, textStyle, modelType]);
 
   //Handle when output change
   useEffect(() => {
     let resolvedPromisesCount = 0;
 
-    if (firstPromiseComplete) {
+    if (firstPromiseComplete && output.length > 0) {
       const promises = output.map((sentence) => {
         if (typeof sentence == "string") {
           if (!rephrasedSentences.hasOwnProperty(sentence.trim())) {
@@ -222,7 +270,6 @@ export default function BodyMiddleParaphraser() {
 
       Promise.all(promises)
         .then((results) => {
-          // console.log(results);
           if (resolvedPromisesCount === output.length) {
             setSecondPromiseComplete(true);
           }
@@ -254,7 +301,7 @@ export default function BodyMiddleParaphraser() {
   }, []);
 
   useEffect(() => {
-    console.log(output);
+    console.log("CC1", output);
   }, [output]);
 
   return (
@@ -279,7 +326,7 @@ export default function BodyMiddleParaphraser() {
         <textarea
           className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2 font-medium"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => handleChangeContent(e.target.value)}
         />
         <div className="flex items-center justify-between text-black dark:text-white">
           <div className="flex items-center ">

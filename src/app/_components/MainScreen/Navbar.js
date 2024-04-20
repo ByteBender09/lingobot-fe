@@ -8,7 +8,7 @@ import {
   faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo, useContext } from "react";
 import { PATH, APIPATH } from "@/app/const";
 import { useRouter } from "next/navigation";
 import useAxiosPrivate from "@/app/(pages)/hooks/useAxiosPrivate";
@@ -16,18 +16,40 @@ import ModalUpdateUserInfor from "./ModalUpdateInfor";
 import Image from "next/image";
 import Logo from "@/app/_externals/assets/LogoApp.svg";
 import USA from "@/app/_externals/assets/USA.svg";
-import authRepository from "../../utils/auth";
 import Link from "next/link";
+import authRepository from "../../utils/auth";
+import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
+import { SUBSCRIBTION } from "@/app/const";
 
 const toggleTheme = () => {
   document.documentElement.classList.toggle("dark");
 };
 
-export default function Navbar() {
+const Navbar = () => {
+  const { subscribtion, setSubscribtion } = useContext(
+    CurrentSubscribtionContext
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nameProfile, setNameProfile] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const router = useRouter();
+
+  //GET CURRENT PLAN
+  axiosPrivate
+    .get("/payment/subscription/current-plan/")
+    .then((res) => {
+      if (res.data.data?.subscription_plan.name === "FREE") {
+        setSubscribtion(SUBSCRIBTION.FREE);
+      } else {
+        setSubscribtion(SUBSCRIBTION.PREMIUM);
+      }
+    })
+    .catch((err) => {
+      if (err.response.status === 401) {
+        authRepository.logout();
+        router.push(PATH.LOGIN);
+      }
+    });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,7 +87,7 @@ export default function Navbar() {
       });
   };
   return (
-    <div className="flex w-full items-center justify-between">
+    <div className="flex w-full items-center justify-between z-20">
       <Link href={PATH.HOME} className="flex-[1] mr-8">
         <Image src={Logo} alt="Logo" />
       </Link>
@@ -93,23 +115,30 @@ export default function Navbar() {
           >
             Hi {nameProfile}
             <div
-              className="absolute w-max bottom-[-140px] right-0 
+              className={`absolute w-max ${
+                subscribtion === SUBSCRIBTION.FREE
+                  ? "bottom-[-140px]"
+                  : "bottom-[-100px]"
+              }  right-0 
               transition-opacity opacity-0 duration-500 modal_profile
-              hidden flex-col py-2 bg-white dark:bg-neutral-900 rounded-[10px] shadow"
+              hidden flex-col py-2 bg-white dark:bg-neutral-900 rounded-[10px] shadow`}
             >
-              <Link
-                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start 
+              {subscribtion === SUBSCRIBTION.FREE && (
+                <Link
+                  className="w-full cursor-pointer px-7 py-2 flex items-center justify-start 
               bg-white dark:bg-neutral-900 hover:bg-amber-300"
-                href={PATH.PREMIUM}
-              >
-                <FontAwesomeIcon
-                  icon={faCrown}
-                  className="mr-6 dark:text-white"
-                />
-                <span className="text-black dark:text-white text-base font-normal">
-                  Premium
-                </span>
-              </Link>
+                  href={PATH.PREMIUM}
+                >
+                  <FontAwesomeIcon
+                    icon={faCrown}
+                    className="mr-6 dark:text-white"
+                  />
+                  <span className="text-black dark:text-white text-base font-normal">
+                    Premium
+                  </span>
+                </Link>
+              )}
+
               <div
                 className="w-full cursor-pointer px-7 py-2 flex items-center justify-start
               bg-white dark:bg-neutral-900 hover:bg-amber-300"
@@ -161,4 +190,6 @@ export default function Navbar() {
       {isModalOpen && <ModalUpdateUserInfor closeModal={closeModal} />}
     </div>
   );
-}
+};
+
+export default memo(Navbar);
