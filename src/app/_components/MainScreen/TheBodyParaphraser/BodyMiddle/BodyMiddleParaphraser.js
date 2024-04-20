@@ -199,7 +199,6 @@ export default function BodyMiddleParaphraser() {
   useEffect(() => {
     if (input.length === 0) return;
     setOutput(input);
-    console.log("WHEN CLICK REPHRASE", output);
     setIsLoading(true);
 
     let resolvedPromisesCount = 0;
@@ -207,23 +206,26 @@ export default function BodyMiddleParaphraser() {
     const promises = input.map((sentence, index) => {
       if (sentence.trim() === "") return;
 
-      if (processedSentences.hasOwnProperty(sentence)) {
-        const randomIndex = Math.floor(
-          Math.random() * processedSentences[sentence].length
-        );
-        updateOutput(index, processedSentences[sentence][randomIndex]);
+      const key = `${sentence}_${textStyle}_${modelType}`;
+      const cachedResult = processedSentences[key];
+
+      if (cachedResult) {
+        const randomIndex = Math.floor(Math.random() * cachedResult.length);
+        updateOutput(index, cachedResult[randomIndex]);
         resolvedPromisesCount++;
       } else {
-        return handleParaphraseInput(sentence, textStyle, modelType).then(
-          (result) => {
-            setProcessedSentences((prevProcessedSentences) => ({
-              ...prevProcessedSentences,
-              [sentence]: result,
-            }));
+        return handleParaphraseInput(sentence, textStyle, modelType)
+          .then((result) => {
+            const newProcessedSentences = { ...processedSentences };
+            newProcessedSentences[key] = result;
+            setProcessedSentences(newProcessedSentences);
             updateOutput(index, result[0]);
             resolvedPromisesCount++;
-          }
-        );
+          })
+          .catch((err) => {
+            console.error(err);
+            resolvedPromisesCount++;
+          });
       }
     });
 
@@ -299,10 +301,6 @@ export default function BodyMiddleParaphraser() {
       handleAnalysisInput();
     }
   }, []);
-
-  useEffect(() => {
-    console.log("CC1", output);
-  }, [output]);
 
   return (
     <div
