@@ -120,7 +120,7 @@ const Navbar = () => {
                   ? "bottom-[-140px]"
                   : "bottom-[-100px]"
               }  right-0 
-              transition-opacity opacity-0 duration-500 modal_profile
+              transition-opacity opacity-0 duration-500 modal_profile z-20
               hidden flex-col py-2 bg-white dark:bg-neutral-900 rounded-[10px] shadow`}
             >
               {subscribtion === SUBSCRIBTION.FREE && (
