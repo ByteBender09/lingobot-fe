@@ -27,14 +27,15 @@ export default function BodyHeadingParaphraser() {
   const handleTextStyleClick = (index) => {
     if (index >= 2) setSelectedOption(MODELTYPE.MISTRAL);
     if (subscribtion === SUBSCRIBTION.PREMIUM) setActiveStyleIndex(index);
-    if (subscribtion === SUBSCRIBTION.FREE && index < 2)
-      setActiveStyleIndex(index);
     else {
-      Swal.fire({
-        title: "Only available for premium users!",
-        icon: "warning",
-        timer: 2000,
-      });
+      if (index < 2) setActiveStyleIndex(index);
+      else {
+        Swal.fire({
+          title: "Only available for premium users!",
+          icon: "warning",
+          timer: 2000,
+        });
+      }
     }
   };
 

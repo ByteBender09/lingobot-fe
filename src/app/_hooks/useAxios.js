@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { axiosClient } from "../api/axios";
+import { axiosClient } from "../_api/axios";
 
 const useAxios = (method, api, body, options, deps) => {
   const [isLoading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ const useAxios = (method, api, body, options, deps) => {
         setLoading(false);
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...deps]);
 
   return [response, error, isLoading];

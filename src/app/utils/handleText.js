@@ -149,3 +149,21 @@ export const truncateContent = (content, limit) => {
   const truncatedWords = words.slice(0, limit);
   return truncatedWords.join(" ");
 };
+
+// Function to convert date time
+export const convertToDesiredFormat = (inputString) => {
+  var dateObj = new Date(inputString);
+
+  var dateStr = dateObj.toLocaleString("en-US", {
+    month: "short",
+    day: "2-digit",
+  });
+
+  var timeStr = dateObj.toLocaleString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return { date: dateStr, time: timeStr };
+};

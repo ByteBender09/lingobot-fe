@@ -14,7 +14,7 @@ import {
   saveToClipboard,
 } from "@/app/utils/handleText";
 
-import { useKeyDown } from "@/app/(pages)/hooks/useKeyDown";
+import { useKeyDown } from "@/app/_hooks/useKeyDown";
 import { useState } from "react";
 
 export const BodyMiddleTools = ({

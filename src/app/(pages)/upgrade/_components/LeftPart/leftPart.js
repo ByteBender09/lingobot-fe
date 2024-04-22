@@ -5,8 +5,8 @@ import { SubExplain1 } from "./subExplains";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import OptionItem from "../payOptionItem";
-import useAxios from "@/app/(pages)/hooks/useAxios";
-import useAxiosPrivate from "@/app/(pages)/hooks/useAxiosPrivate";
+import useAxios from "@/app/_hooks/useAxios";
+import useAxiosPrivate from "@/app/_hooks/useAxiosPrivate";
 
 const LeftPart = () => {
   const axiosPrivate = useAxiosPrivate();

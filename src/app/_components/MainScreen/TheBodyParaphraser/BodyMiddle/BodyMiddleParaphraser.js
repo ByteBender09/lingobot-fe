@@ -12,7 +12,7 @@ import {
   handleGetSimilarMeanings,
 } from "@/app/utils/paraphrasing";
 import { useState, useRef, useEffect, useContext } from "react";
-import { useKeyDown } from "@/app/(pages)/hooks/useKeyDown";
+import { useKeyDown } from "@/app/_hooks/useKeyDown";
 import { BodyMiddleTools } from "./BodyMiddleTools";
 import { ModelStateContext } from "@/app/Context/ModelStateContext";
 import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
@@ -138,9 +138,9 @@ export default function BodyMiddleParaphraser() {
 
   //Handle increase/ decrease active sentence index
   const increaseIndexActiveSentence = () => {
-    if (activeIndex < output.length - 1) {
+    if (activeIndex + 1 < output.length) {
       setActiveIndex((prevIndex) => prevIndex + 1);
-    } else setActiveIndex(output.length - 1);
+    } else if (output.length != 0) setActiveIndex(output.length - 1);
     setShowRephraseOptions(1);
 
     timeoutRef.current = setTimeout(() => {
@@ -216,9 +216,10 @@ export default function BodyMiddleParaphraser() {
       } else {
         return handleParaphraseInput(sentence, textStyle, modelType)
           .then((result) => {
-            const newProcessedSentences = { ...processedSentences };
-            newProcessedSentences[key] = result;
-            setProcessedSentences(newProcessedSentences);
+            setProcessedSentences((prevProcessedSentences) => ({
+              ...prevProcessedSentences,
+              [key]: result,
+            }));
             updateOutput(index, result[0]);
             resolvedPromisesCount++;
           })
@@ -301,6 +302,10 @@ export default function BodyMiddleParaphraser() {
       handleAnalysisInput();
     }
   }, []);
+
+  // useEffect(() => {
+  //   console.log(output);
+  // }, [output]);
 
   return (
     <div
@@ -454,18 +459,20 @@ export default function BodyMiddleParaphraser() {
                    border border-gray-300 dark:border-black p-2 rounded-lg shadow-lg z-20"
                   >
                     <ul>
-                      {processedSentences.hasOwnProperty(input[activeIndex]) &&
-                        processedSentences[input[activeIndex]].map(
-                          (replacement, replacementIndex) => (
-                            <li
-                              key={replacementIndex}
-                              onClick={() => handleReplaceSentence(replacement)}
-                              className="cursor-pointer hover:bg-gray-200 dark:hover:bg-black p-1 rounded-md px-2"
-                            >
-                              {replacement}
-                            </li>
-                          )
-                        )}
+                      {processedSentences.hasOwnProperty(
+                        `${input[activeIndex]}_${textStyle}_${modelType}`
+                      ) &&
+                        processedSentences[
+                          `${input[activeIndex]}_${textStyle}_${modelType}`
+                        ].map((replacement, replacementIndex) => (
+                          <li
+                            key={replacementIndex}
+                            onClick={() => handleReplaceSentence(replacement)}
+                            className="cursor-pointer hover:bg-gray-200 dark:hover:bg-black p-1 rounded-md px-2"
+                          >
+                            {replacement}
+                          </li>
+                        ))}
                     </ul>
                     <button
                       className="mt-2 p-1 w-full bg-gray-200 dark:bg-black hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md"

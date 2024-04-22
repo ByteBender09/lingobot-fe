@@ -2,8 +2,6 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faGear,
-  faChartSimple,
   faKeyboard,
   faClockRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
@@ -27,13 +25,10 @@ export default function BodyFootingParaphraser() {
       className="hidden md:hidden lg:flex xl:flex 2xl:flex
      justify-between items-end mt-5"
     >
-      <div className="px-4 py-3 hidden md:hidden lg:hidden xl:flex 2xl:flex items-center bg-cyan-100 dark:bg-gray-200 rounded-[14px] text-black ">
-        <button className="mr-4">
-          <FontAwesomeIcon icon={faGear} />
-        </button>
-        <button className="mr-4">
-          <FontAwesomeIcon icon={faChartSimple} />
-        </button>
+      <div
+        className="px-4 py-3 hidden md:hidden lg:hidden xl:flex 2xl:flex items-center 
+      bg-cyan-100 dark:bg-gray-200 rounded-[14px] text-black "
+      >
         <button className="mr-4">
           <FontAwesomeIcon
             icon={faKeyboard}

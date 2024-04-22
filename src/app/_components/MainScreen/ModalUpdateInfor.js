@@ -5,7 +5,7 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GENDERS, APIPATH } from "@/app/const";
 import { AlertNotify } from "../Others/alertNotify";
-import useAxiosPrivate from "../../(pages)/hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../_hooks/useAxiosPrivate";
 import Swal from "sweetalert2";
 import LoadingSpinner from "../Others/spinner";
 import authRepository from "@/app/utils/auth";

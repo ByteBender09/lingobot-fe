@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AlertNotify } from "@/app/_components/Others/alertNotify";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { axiosClient } from "../../api/axios";
+import { axiosClient } from "../../../_api/axios";
 import { PATH, APIPATH } from "@/app/const";
 import validateEmail from "@/app/utils/validate";
 import Image from "next/image";

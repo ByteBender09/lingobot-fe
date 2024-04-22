@@ -6,7 +6,11 @@ import {
   faKeyboard,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { convertToDesiredFormat } from "@/app/utils/handleText";
+import { SUBSCRIBTION } from "@/app/const";
+import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
+import { useState, useContext, useEffect } from "react";
+import useAxiosPrivate from "@/app/_hooks/useAxiosPrivate";
 
 const hotkeyTitles = [
   {
@@ -19,19 +23,6 @@ const hotkeyTitles = [
   },
 ];
 
-const queryHistories = [
-  {
-    date: "Aug 03",
-    time: "02:49 pm",
-    input: "They were there to enjoy us and they were there to pray for us.",
-  },
-  {
-    date: "Aug 09",
-    time: "04:49 pm",
-    input: "They were there to enjoy us and they were there to pray for us.",
-  },
-];
-
 export default function ModalSettings({ closeModal, phaseSettings }) {
   const [phaseState, setPhaseState] = useState(phaseSettings);
   return (
@@ -39,7 +30,7 @@ export default function ModalSettings({ closeModal, phaseSettings }) {
       className="fixed inset-0 z-[1000] bg-black bg-opacity-70 
     flex flex-col items-end justify-start"
     >
-      <div className="bg-white dark:bg-neutral-800 h-full">
+      <div className="bg-white dark:bg-neutral-800 h-full min-w-[20%]">
         <div
           className="flex justify-between items-center py-4 
         border-b border-black dark:border-white px-6"
@@ -77,6 +68,30 @@ export default function ModalSettings({ closeModal, phaseSettings }) {
 }
 
 const QueryHistoryPattern = () => {
+  const axiosPrivate = useAxiosPrivate();
+  const { subscribtion } = useContext(CurrentSubscribtionContext);
+  const [listQuery, setListQuery] = useState([]);
+
+  useEffect(() => {
+    const fetchQueryHistory = async () => {
+      try {
+        let limit = 0;
+        if (subscribtion === SUBSCRIBTION.FREE) limit = 1;
+        else limit = 5;
+        const response = await axiosPrivate.get(
+          `/paraphrase-history/?limit=${limit}&offset=0`
+        );
+        setListQuery(response.data.data.results);
+      } catch (error) {
+        console.error("Error fetching query history:", error);
+      }
+    };
+
+    fetchQueryHistory();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="w-full">
       <div
@@ -92,17 +107,17 @@ const QueryHistoryPattern = () => {
         Last text paraphrased
       </div>
       <div className="flex flex-col">
-        {queryHistories.map((item, index) => (
+        {listQuery.map((item, index) => (
           <div
             key={index}
             className="flex flex-col p-4 border-b border-black dark:border-white cursor-pointer"
           >
             <div>
               <span className="text-[11px] font-normal mr-2 text-black dark:text-white">
-                {item.date},
+                {convertToDesiredFormat(item.created_at).date},
               </span>
               <span className="text-zinc-500 text-[11px] font-normal">
-                {item.time}
+                {convertToDesiredFormat(item.created_at).time}
               </span>
             </div>
             <span className="text-[10px] font-normal text-black dark:text-white">

@@ -5,11 +5,12 @@ import { LISTSTYLES, MODELTYPE } from "../const";
 export const handleParaphraseInput = async (sentence, style, modelType) => {
   let processedEndpoint =
     style !== LISTSTYLES[0] && style !== LISTSTYLES[1]
-      ? process.env.NEXT_PUBLIC_MISTRAL_ENDPOINT + "/paraphrase"
+      ? process.env.NEXT_PUBLIC_MISTRAL_ENDPOINT + "/mistral"
       : modelType === MODELTYPE.T5
       ? process.env.NEXT_PUBLIC_KAGGLE_ENDPOINT + "/paraphrase"
-      : process.env.NEXT_PUBLIC_MISTRAL_ENDPOINT + "/paraphrase";
+      : process.env.NEXT_PUBLIC_MISTRAL_ENDPOINT + "/mistral";
 
+  console.log(processedEndpoint);
   const body = { sequence: sentence.trim(), style: style };
   const response = await axios.post(processedEndpoint, body);
   const result = response.data?.data || [sentence];

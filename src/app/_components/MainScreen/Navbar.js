@@ -8,18 +8,17 @@ import {
   faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useEffect, memo, useContext } from "react";
-import { PATH, APIPATH } from "@/app/const";
-import { useRouter } from "next/navigation";
-import useAxiosPrivate from "@/app/(pages)/hooks/useAxiosPrivate";
-import ModalUpdateUserInfor from "./ModalUpdateInfor";
+import { PATH, APIPATH, SUBSCRIBTION } from "@/app/const";
 import Image from "next/image";
 import Logo from "@/app/_externals/assets/LogoApp.svg";
 import USA from "@/app/_externals/assets/USA.svg";
+import { useState, useEffect, memo, useContext } from "react";
+import { useRouter } from "next/navigation";
+import useAxiosPrivate from "@/app/_hooks/useAxiosPrivate";
+import ModalUpdateUserInfor from "./ModalUpdateInfor";
 import Link from "next/link";
 import authRepository from "../../utils/auth";
 import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
-import { SUBSCRIBTION } from "@/app/const";
 
 const toggleTheme = () => {
   document.documentElement.classList.toggle("dark");
@@ -34,23 +33,6 @@ const Navbar = () => {
   const axiosPrivate = useAxiosPrivate();
   const router = useRouter();
 
-  //GET CURRENT PLAN
-  axiosPrivate
-    .get("/payment/subscription/current-plan/")
-    .then((res) => {
-      if (res.data.data?.subscription_plan.name === "FREE") {
-        setSubscribtion(SUBSCRIBTION.FREE);
-      } else {
-        setSubscribtion(SUBSCRIBTION.PREMIUM);
-      }
-    })
-    .catch((err) => {
-      if (err.response.status === 401) {
-        authRepository.logout();
-        router.push(PATH.LOGIN);
-      }
-    });
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,8 +43,27 @@ const Navbar = () => {
       }
     };
 
+    //GET CURRENT PLAN
+    const fetchCurrentPlan = async () => {
+      try {
+        const response = await axiosPrivate.get(
+          "/payment/subscription/current-plan/"
+        );
+        if (response.data.data?.subscription_plan.name === "FREE") {
+          setSubscribtion(SUBSCRIBTION.FREE);
+        } else {
+          setSubscribtion(SUBSCRIBTION.PREMIUM);
+        }
+      } catch (error) {
+        console.error("Error fetching query history:", error);
+      }
+    };
+
     fetchData();
-  }, []); // Chỉ gọi một lần sau khi component được mount
+    fetchCurrentPlan();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const openModal = () => {
     setIsModalOpen(true);

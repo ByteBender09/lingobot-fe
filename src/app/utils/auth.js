@@ -16,15 +16,11 @@ const authRepository = {
   },
 
   getAccessToken() {
-    if (typeof localStorage !== "undefined") {
-      return localStorage.accessToken;
-    }
+    return localStorage.accessToken;
   },
 
   getRefreshToken() {
-    if (typeof localStorage !== "undefined") {
-      return localStorage.refreshToken;
-    }
+    return localStorage.refreshToken;
   },
 
   getID() {
