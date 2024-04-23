@@ -1,11 +1,8 @@
-module.exports = {
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/auth/login",
-        permanent: true,
-      },
-    ];
+const nextConfig = {
+  reactStrictMode: true,
+  experimental: {
+    serverActions: true,
   },
 };
+
+module.exports = nextConfig;

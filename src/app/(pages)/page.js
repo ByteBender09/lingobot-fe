@@ -1,6 +1,5 @@
-import { redirect } from "next/dist/server/api-utils";
+import { redirect } from "next/navigation";
 
 export default function MainPage() {
-  // redirect("/login");
-  return <span>CC</span>;
+  redirect("/home");
 }

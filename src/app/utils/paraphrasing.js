@@ -10,7 +10,6 @@ export const handleParaphraseInput = async (sentence, style, modelType) => {
       ? process.env.NEXT_PUBLIC_KAGGLE_ENDPOINT + "/paraphrase"
       : process.env.NEXT_PUBLIC_MISTRAL_ENDPOINT + "/mistral";
 
-  console.log(processedEndpoint);
   const body = { sequence: sentence.trim(), style: style };
   const response = await axios.post(processedEndpoint, body);
   const result = response.data?.data || [sentence];
