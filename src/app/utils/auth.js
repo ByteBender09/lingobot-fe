@@ -16,11 +16,16 @@ const authRepository = {
   },
 
   getAccessToken() {
-    return localStorage.accessToken;
+    if (typeof localStorage !== "undefined") {
+      return localStorage.accessToken;
+    } else return "";
   },
 
   getRefreshToken() {
-    return localStorage.refreshToken;
+    if (typeof localStorage !== "undefined") {
+      return localStorage.refreshToken;
+    }
+    return "";
   },
 
   getID() {
