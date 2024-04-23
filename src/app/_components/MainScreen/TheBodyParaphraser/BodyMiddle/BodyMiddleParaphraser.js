@@ -15,14 +15,19 @@ import { useState, useRef, useEffect, useContext } from "react";
 import { useKeyDown } from "@/app/_hooks/useKeyDown";
 import { BodyMiddleTools } from "./BodyMiddleTools";
 import { ModelStateContext } from "@/app/Context/ModelStateContext";
+import { SeletedQueryContext } from "@/app/Context/SelectedQueryContext";
 import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
 import { LISTSTYLES, SUBSCRIBTION } from "@/app/const";
+import useAxiosPrivate from "@/app/_hooks/useAxiosPrivate";
 import LoadingSpinner from "../../../Others/spinner";
 import Swal from "sweetalert2";
 
 export default function BodyMiddleParaphraser() {
-  const { activeStyleIndex, selectedOption } = useContext(ModelStateContext);
+  const { activeStyleIndex, selectedOption, setSelectedOption } =
+    useContext(ModelStateContext);
   const { subscribtion } = useContext(CurrentSubscribtionContext);
+  const { selectedQuery } = useContext(SeletedQueryContext);
+  const axiosPrivate = useAxiosPrivate();
   const [textStyle, setTextStyle] = useState(LISTSTYLES[activeStyleIndex]);
   const [modelType, setModelType] = useState(selectedOption);
   const [content, setContent] = useState("");
@@ -37,7 +42,7 @@ export default function BodyMiddleParaphraser() {
   const [selectedWord, setSelectedWord] = useState("");
   const [showRephraseOptions, setShowRephraseOptions] = useState(0);
   const [showSimilarWords, setShowSimilarWords] = useState(false);
-  const [replaceWords, setRephaceWords] = useState([]);
+  const [replaceWords, setReplaceWords] = useState([]);
   const fileInputRef = useRef(null);
   const timeoutRef = useRef(null);
 
@@ -172,7 +177,7 @@ export default function BodyMiddleParaphraser() {
 
   //Function to replace a phrase
   const rephrasePhrase = (alternative, phraseIndex, index) => {
-    setRephaceWords((prev) => {
+    setReplaceWords((prev) => {
       const updatedReplaceWords = [...prev];
       updatedReplaceWords[phraseIndex][index].text = alternative;
       return updatedReplaceWords;
@@ -188,6 +193,53 @@ export default function BodyMiddleParaphraser() {
     //Init when change model
     setTextStyle(LISTSTYLES[activeStyleIndex]);
     setModelType(selectedOption);
+  };
+
+  //QUERY HISTORY
+  //Function set current query
+  const setCurrentQuery = (item) => {
+    setContent(item?.input);
+    setReplaceWords(item?.output);
+    setOutput(item?.output);
+    setSelectedOption(item?.model_type);
+    switch (item?.text_style) {
+      case "Standard":
+        setActiveIndex(0);
+        break;
+      case "Fluency":
+        setActiveIndex(1);
+        break;
+      case "Formal":
+        setActiveIndex(2);
+        break;
+      case "Academy":
+        setActiveIndex(3);
+        break;
+      case "Creative":
+        setActiveIndex(4);
+        break;
+      case "Simple":
+        setActiveIndex(5);
+        break;
+      case "Shorten":
+        setActiveIndex(6);
+        break;
+    }
+  };
+
+  //Function to save to history
+  const saveQueryToHistory = async (results) => {
+    try {
+      const query = {
+        input: content,
+        output: results,
+        modelType: selectedOption,
+        textStyle: textStyle,
+      };
+      await axiosPrivate.post("/paraphrase-history/", query);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   //When text style change => reset output
@@ -277,7 +329,8 @@ export default function BodyMiddleParaphraser() {
             setSecondPromiseComplete(true);
           }
           setFirstPromiseComplete(false);
-          setRephaceWords(results);
+          setReplaceWords(results);
+          saveQueryToHistory(results);
         })
         .catch((error) => {
           console.error("Error calling API all sentences:", error);
@@ -303,9 +356,12 @@ export default function BodyMiddleParaphraser() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   console.log(output);
-  // }, [output]);
+  useEffect(() => {
+    if (Object.keys(selectedQuery).length != 0) {
+      setCurrentQuery(selectedQuery);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedQuery]);
 
   return (
     <div

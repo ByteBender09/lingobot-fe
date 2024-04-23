@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ModelStateProvider } from "./Context/ModelStateContext";
+import { SeletedQueryProvider } from "./Context/SelectedQueryContext";
 import { CurrentSubscribtionProvider } from "./Context/CurrentSubscribtionContext";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -16,9 +17,11 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <CurrentSubscribtionProvider>
           <ModelStateProvider>
-            <div className="w-screen h-full bg-sky-100 dark:bg-neutral-900 relative">
-              {children}
-            </div>
+            <SeletedQueryProvider>
+              <div className="w-screen h-full bg-sky-100 dark:bg-neutral-900 relative">
+                {children}
+              </div>
+            </SeletedQueryProvider>
           </ModelStateProvider>
         </CurrentSubscribtionProvider>
       </body>

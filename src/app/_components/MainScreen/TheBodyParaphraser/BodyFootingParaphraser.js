@@ -22,11 +22,11 @@ export default function BodyFootingParaphraser() {
   };
   return (
     <div
-      className="hidden md:hidden lg:flex xl:flex 2xl:flex
+      className="hidden md:flex lg:flex xl:flex 2xl:flex
      justify-between items-end mt-5"
     >
       <div
-        className="px-4 py-3 hidden md:hidden lg:hidden xl:flex 2xl:flex items-center 
+        className="px-4 py-3 hidden md:flex lg:flex xl:flex 2xl:flex items-center 
       bg-cyan-100 dark:bg-gray-200 rounded-[14px] text-black "
       >
         <button className="mr-4">
@@ -44,16 +44,12 @@ export default function BodyFootingParaphraser() {
       </div>
       <div className="flex px-5 py-3 self-end bg-white dark:bg-neutral-900 rounded-[14px] text-black dark:text-white text-[14px] font-normal">
         <div className="flex items-center mr-5">
-          <div className="w-2.5 h-2.5 bg-amber-600 rounded-full mr-[10px]" />
-          <span>Changed Words</span>
-        </div>
-        <div className="flex items-center mr-5">
-          <div className="w-2.5 h-0.5 bg-amber-300 mr-[10px]" />
-          <span>Structural Changes</span>
+          <div className="w-2.5 h-0.5 bg-blue-300 dark:bg-neutral-400 mr-[10px]" />
+          <span>Selected Sentences</span>
         </div>
         <div className="flex items-center">
-          <div className="w-2.5 h-2.5 bg-sky-700 rounded-full mr-[10px]" />
-          <span>Longest Unchanged Words</span>
+          <div className="w-2.5 h-2.5 bg-blue-700 dark:bg-blue-400 rounded-full mr-[10px]" />
+          <span>Selected Words</span>
         </div>
       </div>
       {isOpen && (

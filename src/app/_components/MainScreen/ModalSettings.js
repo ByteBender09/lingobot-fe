@@ -6,9 +6,10 @@ import {
   faKeyboard,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { convertToDesiredFormat } from "@/app/utils/handleText";
 import { SUBSCRIBTION } from "@/app/const";
+import { convertToDesiredFormat } from "@/app/utils/handleText";
 import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
+import { SeletedQueryContext } from "@/app/Context/SelectedQueryContext";
 import { useState, useContext, useEffect } from "react";
 import useAxiosPrivate from "@/app/_hooks/useAxiosPrivate";
 
@@ -30,7 +31,7 @@ export default function ModalSettings({ closeModal, phaseSettings }) {
       className="fixed inset-0 z-[1000] bg-black bg-opacity-70 
     flex flex-col items-end justify-start"
     >
-      <div className="bg-white dark:bg-neutral-800 h-full min-w-[20%]">
+      <div className="bg-white dark:bg-neutral-800 h-full min-w-[25%]">
         <div
           className="flex justify-between items-center py-4 
         border-b border-black dark:border-white px-6"
@@ -61,16 +62,28 @@ export default function ModalSettings({ closeModal, phaseSettings }) {
             className="cursor-pointer dark:text-white"
           />
         </div>
-        {phaseState == 0 ? <HotKeysPattern /> : <QueryHistoryPattern />}
+        {phaseState == 0 ? (
+          <HotKeysPattern />
+        ) : (
+          <QueryHistoryPattern closeModal={closeModal} />
+        )}
       </div>
     </div>
   );
 }
 
-const QueryHistoryPattern = () => {
+const QueryHistoryPattern = ({ closeModal }) => {
   const axiosPrivate = useAxiosPrivate();
   const { subscribtion } = useContext(CurrentSubscribtionContext);
+  const { setSelectedQuery } = useContext(SeletedQueryContext);
   const [listQuery, setListQuery] = useState([]);
+
+  const handleClickQuery = (item) => {
+    setSelectedQuery(item);
+    setTimeout(() => {
+      closeModal();
+    }, 1500);
+  };
 
   useEffect(() => {
     const fetchQueryHistory = async () => {
@@ -110,7 +123,9 @@ const QueryHistoryPattern = () => {
         {listQuery.map((item, index) => (
           <div
             key={index}
-            className="flex flex-col p-4 border-b border-black dark:border-white cursor-pointer"
+            className="flex flex-col p-4 border-b border-black dark:border-white 
+            cursor-pointer bg-white hover:bg-zinc-100 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+            onClick={() => handleClickQuery(item)}
           >
             <div>
               <span className="text-[11px] font-normal mr-2 text-black dark:text-white">
@@ -136,8 +151,8 @@ const HotKeysPattern = () => {
       <span className="text-black dark:text-white text-base font-semibold">
         Hotkeys
       </span>
-      <div className="flex mt-4">
-        <div className="mr-4">
+      <div className="flex mt-4 w-full justify-between">
+        <div className="mr-4 flex-[1]">
           <div
             className="text-black dark:text-white text-base font-medium py-4
             border-b border-black dark:border-white"
@@ -154,7 +169,7 @@ const HotKeysPattern = () => {
             </div>
           ))}
         </div>
-        <div className="ml-4">
+        <div className="ml-4 flex-[1]">
           <div
             className="text-black dark:text-white text-base font-medium py-4
             border-b border-black dark:border-white"
