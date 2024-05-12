@@ -59,8 +59,10 @@ const Navbar = () => {
       }
     };
 
-    fetchData();
-    fetchCurrentPlan();
+    if (authRepository.getAccessToken() != "") {
+      fetchData();
+      fetchCurrentPlan();
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

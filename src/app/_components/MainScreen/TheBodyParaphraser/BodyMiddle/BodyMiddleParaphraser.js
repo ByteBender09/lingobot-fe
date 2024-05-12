@@ -385,6 +385,7 @@ export default function BodyMiddleParaphraser() {
         <textarea
           className="w-full flex-[1] pr-1 bg-transparent text-black dark:text-white leading-[30px] outline-none mb-2 font-medium"
           value={content}
+          placeholder="Enter your sentence to paraphrase"
           onChange={(e) => handleChangeContent(e.target.value)}
         />
         <div className="flex items-center justify-between text-black dark:text-white">

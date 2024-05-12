@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function SubIntroduction() {
   return (
-    <div className="w-ful flex flex-col items-center py-12 bg-white dark:bg-neutral-900 mt-20">
+    <div className="w-ful flex flex-col items-center py-12 bg-white dark:bg-neutral-900 mt-15">
       <h3 className="text-center text-black dark:text-white text-[22px] font-normal mb-12">
         LingoBot&apos;s AI-powered paraphrasing tool will enhance your writing
       </h3>

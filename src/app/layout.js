@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         <CurrentSubscribtionProvider>
           <ModelStateProvider>
             <SeletedQueryProvider>
-              <div className="w-screen h-full bg-sky-100 dark:bg-neutral-900 relative">
+              <div className="h-full bg-sky-100 dark:bg-neutral-900 relative">
                 {children}
               </div>
             </SeletedQueryProvider>
