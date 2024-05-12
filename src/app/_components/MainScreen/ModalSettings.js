@@ -24,7 +24,11 @@ const hotkeyTitles = [
   },
 ];
 
-export default function ModalSettings({ closeModal, phaseSettings }) {
+export default function ModalSettings({
+  isAuthenticated,
+  closeModal,
+  phaseSettings,
+}) {
   const [phaseState, setPhaseState] = useState(phaseSettings);
   return (
     <div
@@ -46,15 +50,17 @@ export default function ModalSettings({ closeModal, phaseSettings }) {
               } `}
               onClick={() => setPhaseState(0)}
             />
-            <FontAwesomeIcon
-              icon={faClockRotateLeft}
-              className={`cursor-pointer ${
-                phaseState == 1
-                  ? "text-green-600 dark:text-green-600"
-                  : "text-black dark:text-white"
-              } `}
-              onClick={() => setPhaseState(1)}
-            />
+            {isAuthenticated && (
+              <FontAwesomeIcon
+                icon={faClockRotateLeft}
+                className={`cursor-pointer ${
+                  phaseState == 1
+                    ? "text-green-600 dark:text-green-600"
+                    : "text-black dark:text-white"
+                } `}
+                onClick={() => setPhaseState(1)}
+              />
+            )}
           </div>
           <FontAwesomeIcon
             icon={faClose}

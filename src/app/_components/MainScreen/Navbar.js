@@ -29,11 +29,14 @@ const Navbar = () => {
     CurrentSubscribtionContext
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [nameProfile, setNameProfile] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const router = useRouter();
 
   useEffect(() => {
+    const accessToken = authRepository.getAccessToken();
+
     const fetchData = async () => {
       try {
         const info = await authRepository.getInfo();
@@ -59,11 +62,13 @@ const Navbar = () => {
       }
     };
 
-    if (authRepository.getAccessToken() != "") {
+    if (accessToken != undefined) {
+      setIsAuthenticated(true);
       fetchData();
       fetchCurrentPlan();
+    } else {
+      setIsAuthenticated(false);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -89,6 +94,7 @@ const Navbar = () => {
         console.log(err);
       });
   };
+
   return (
     <div className="flex w-full items-center justify-between z-20">
       <Link href={PATH.HOME} className="flex-[1] mr-8">
@@ -108,68 +114,79 @@ const Navbar = () => {
           </h1>
         </div>
         <div className="flex text-stone-500 dark:text-white">
-          <div
-            className="text-black dark:text-white 
+          {isAuthenticated ? (
+            <div
+              className="text-black dark:text-white 
             text-sm md:text-sm lg:text-base xl:text-base 2xl:text-base
             font-semibold self-center relative h-[40px]
             flex items-center justify-center text_profile
             mr-3 md:mr-3 lg:mr-5 xl:mr-5 2xl:mr-5
             cursor-pointer "
-          >
-            Hi {nameProfile}
-            <div
-              className={`absolute w-max ${
-                subscribtion === SUBSCRIBTION.FREE
-                  ? "bottom-[-140px]"
-                  : "bottom-[-100px]"
-              }  right-0 
+            >
+              Hi {nameProfile}
+              <div
+                className={`absolute w-max ${
+                  subscribtion === SUBSCRIBTION.FREE
+                    ? "bottom-[-140px]"
+                    : "bottom-[-100px]"
+                }  right-0 
               transition-opacity opacity-0 duration-500 modal_profile z-20
               hidden flex-col py-2 bg-white dark:bg-neutral-900 rounded-[10px] shadow`}
-            >
-              {subscribtion === SUBSCRIBTION.FREE && (
-                <Link
-                  className="w-full cursor-pointer px-7 py-2 flex items-center justify-start 
+              >
+                {subscribtion === SUBSCRIBTION.FREE && (
+                  <Link
+                    className="w-full cursor-pointer px-7 py-2 flex items-center justify-start 
               bg-white dark:bg-neutral-900 hover:bg-amber-300"
-                  href={PATH.PREMIUM}
+                    href={PATH.PREMIUM}
+                  >
+                    <FontAwesomeIcon
+                      icon={faCrown}
+                      className="mr-6 dark:text-white"
+                    />
+                    <span className="text-black dark:text-white text-base font-normal">
+                      Premium
+                    </span>
+                  </Link>
+                )}
+
+                <div
+                  className="w-full cursor-pointer px-7 py-2 flex items-center justify-start
+              bg-white dark:bg-neutral-900 hover:bg-amber-300"
+                  onClick={openModal}
                 >
                   <FontAwesomeIcon
-                    icon={faCrown}
-                    className="mr-6 dark:text-white"
+                    icon={faUser}
+                    className="mr-7 dark:text-white"
                   />
                   <span className="text-black dark:text-white text-base font-normal">
-                    Premium
+                    Profile
                   </span>
-                </Link>
-              )}
-
-              <div
-                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start
+                </div>
+                <div
+                  className="w-full cursor-pointer px-7 py-2 flex items-center justify-start
               bg-white dark:bg-neutral-900 hover:bg-amber-300"
-                onClick={openModal}
-              >
-                <FontAwesomeIcon
-                  icon={faUser}
-                  className="mr-7 dark:text-white"
-                />
-                <span className="text-black dark:text-white text-base font-normal">
-                  Profile
-                </span>
-              </div>
-              <div
-                className="w-full cursor-pointer px-7 py-2 flex items-center justify-start
-              bg-white dark:bg-neutral-900 hover:bg-amber-300"
-                onClick={handleLogOutClick}
-              >
-                <FontAwesomeIcon
-                  icon={faArrowRightFromBracket}
-                  className="mr-7 dark:text-white"
-                />
-                <span className="text-black dark:text-white text-base font-normal">
-                  Log Out
-                </span>
+                  onClick={handleLogOutClick}
+                >
+                  <FontAwesomeIcon
+                    icon={faArrowRightFromBracket}
+                    className="mr-7 dark:text-white"
+                  />
+                  <span className="text-black dark:text-white text-base font-normal">
+                    Log Out
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div
+              className="flex items-center justify-center mr-3 md:mr-3 lg:mr-5 xl:mr-5 2xl:mr-5
+            cursor-pointer text-black dark:text-white font-semibold"
+              onClick={() => router.push(PATH.LOGIN)}
+            >
+              Log In
+            </div>
+          )}
+
           <div
             className="w-10 h-10 
           hidden md:hidden lg:flex xl:flex 2xl:flex
