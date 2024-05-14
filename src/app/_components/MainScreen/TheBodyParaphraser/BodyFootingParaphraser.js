@@ -98,24 +98,24 @@ export default function BodyFootingParaphraser() {
 
             {isModalVisible && (
               <div
-                className="flex absolute w-full top-[-150px] left-0 bg-white p-5 text-xs
+                className="flex absolute w-max top-[-150px] right-0 bg-white p-5 text-xs
         h-max items-start justify-center flex-col gap-3 rounded-[15px] shadow border border-stone-300"
               >
                 <h4 className="font-medium self-center">Range Value: 0 - 1</h4>
                 <div className="flex">
-                  <h4 className="mr-3 font-medium">Blue score:</h4>
+                  <h4 className="mr-2 font-medium">Blue score:</h4>
                   <span className="font-light">
                     the proportion of similar words between 2 sentences
                   </span>
                 </div>
                 <div className="flex">
-                  <h4 className="mr-3 font-medium">
+                  <h4 className="mr-2 font-medium">
                     WPD (Word Position Deviation):
                   </h4>
                   <span className="font-light">word position change rate</span>
                 </div>
                 <div className="flex">
-                  <h4 className="mr-3 font-medium">LD (Lexical Deviation):</h4>
+                  <h4 className="mr-2 font-medium">LD (Lexical Deviation):</h4>
                   <span className="font-light">synonym usage rate</span>
                 </div>
               </div>
