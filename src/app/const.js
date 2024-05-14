@@ -18,6 +18,7 @@ export const APIPATH = {
   LOGIN: "/auth/login/",
   REGISTER: "/auth/register/",
   LOGOUT: "/auth/logout/",
+  SCORE: "/text2text/score/",
 };
 
 export const freeServiceItems = [

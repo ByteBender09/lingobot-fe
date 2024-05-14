@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ModelStateProvider } from "./Context/ModelStateContext";
+import { ScoreProvider } from "./Context/ScoreContext";
 import { SeletedQueryProvider } from "./Context/SelectedQueryContext";
 import { CurrentSubscribtionProvider } from "./Context/CurrentSubscribtionContext";
 
@@ -18,9 +19,11 @@ export default function RootLayout({ children }) {
         <CurrentSubscribtionProvider>
           <ModelStateProvider>
             <SeletedQueryProvider>
-              <div className="h-full bg-sky-100 dark:bg-neutral-900 relative">
-                {children}
-              </div>
+              <ScoreProvider>
+                <div className="h-full bg-sky-100 dark:bg-neutral-900 relative">
+                  {children}
+                </div>
+              </ScoreProvider>
             </SeletedQueryProvider>
           </ModelStateProvider>
         </CurrentSubscribtionProvider>

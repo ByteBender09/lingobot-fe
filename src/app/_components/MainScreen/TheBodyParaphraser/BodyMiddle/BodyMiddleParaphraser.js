@@ -11,20 +11,24 @@ import {
   handleParaphraseInput,
   handleGetSimilarMeanings,
 } from "@/app/utils/paraphrasing";
+import { axiosClient } from "@/app/_api/axios";
 import { useState, useRef, useEffect, useContext } from "react";
 import { useKeyDown } from "@/app/_hooks/useKeyDown";
 import { BodyMiddleTools } from "./BodyMiddleTools";
+import { ScoreContext } from "@/app/Context/ScoreContext";
 import { ModelStateContext } from "@/app/Context/ModelStateContext";
 import { SeletedQueryContext } from "@/app/Context/SelectedQueryContext";
 import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
-import { LISTSTYLES, SUBSCRIBTION } from "@/app/const";
+import { LISTSTYLES, SUBSCRIBTION, APIPATH } from "@/app/const";
 import useAxiosPrivate from "@/app/_hooks/useAxiosPrivate";
 import LoadingSpinner from "../../../Others/spinner";
 import Swal from "sweetalert2";
+import authRepository from "@/app/utils/auth";
 
 export default function BodyMiddleParaphraser() {
   const { activeStyleIndex, selectedOption, setSelectedOption } =
     useContext(ModelStateContext);
+  const { setScore, setLoadingScore } = useContext(ScoreContext);
   const { subscribtion } = useContext(CurrentSubscribtionContext);
   const { selectedQuery } = useContext(SeletedQueryContext);
   const axiosPrivate = useAxiosPrivate();
@@ -242,6 +246,30 @@ export default function BodyMiddleParaphraser() {
     }
   };
 
+  //Handle Blue Score
+  const handleBlueScore = (input, output) => {
+    const outputToString = output
+      .map((arr) => {
+        return arr
+          .map((item) => {
+            return item.text;
+          })
+          .join(" ");
+      })
+      .join("\n");
+    const object = { input: input, output: outputToString };
+
+    console.log(outputToString);
+    axiosClient
+      .post(APIPATH.SCORE, object)
+      .then((res) => {
+        setScore(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   //When text style change => reset output
   useEffect(() => {
     setOutput([]);
@@ -330,7 +358,8 @@ export default function BodyMiddleParaphraser() {
           }
           setFirstPromiseComplete(false);
           setReplaceWords(results);
-          saveQueryToHistory(results);
+          if (authRepository.getAccessToken() != undefined)
+            saveQueryToHistory(results);
         })
         .catch((error) => {
           console.error("Error calling API all sentences:", error);
@@ -345,6 +374,9 @@ export default function BodyMiddleParaphraser() {
       const isArrayofArrays = replaceWords.every(Array.isArray);
       if (isArrayofArrays) {
         setOutput(replaceWords);
+        handleBlueScore(content, replaceWords);
+
+        // if (Array.isArray(output) && Array.isArray(replaceWords[0]))
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -362,6 +394,12 @@ export default function BodyMiddleParaphraser() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedQuery]);
+
+  // Update Loading
+  useEffect(() => {
+    setLoadingScore(isLoading);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
 
   return (
     <div
