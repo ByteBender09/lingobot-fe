@@ -190,7 +190,9 @@ export default function BodyMiddleParaphraser() {
 
   //Handle split into smaller sentence to request
   const handleAnalysisInput = () => {
-    var sentences = content.split(/[\.\?\!]+/);
+    const regex = /(?<!\d)\.(?!\d)|[?!]+/;
+    var sentences = content.split(regex);
+    console.log(sentences);
     sentences = sentences.filter((sentence) => sentence.trim() !== "");
     setInput(sentences);
 
@@ -259,7 +261,6 @@ export default function BodyMiddleParaphraser() {
       .join("\n");
     const object = { input: input, output: outputToString };
 
-    console.log(outputToString);
     axiosClient
       .post(APIPATH.SCORE, object)
       .then((res) => {
@@ -357,6 +358,7 @@ export default function BodyMiddleParaphraser() {
             setSecondPromiseComplete(true);
           }
           setFirstPromiseComplete(false);
+          console.log(results);
           setReplaceWords(results);
           if (authRepository.getAccessToken() != undefined)
             saveQueryToHistory(results);

@@ -34,15 +34,22 @@ export const BodyMiddleTools = ({
   //Handle save output to clipboard
   const handleSaveToClipboard = () => {
     setIsCopied(true);
-    const textToCopy = output
-      .map((arr) => {
-        return arr
-          .map((item) => {
-            return item.text;
-          })
-          .join(" ");
-      })
-      .join("\n");
+    var textToCopy = "";
+
+    if (Array.isArray(output) && Array.isArray(output[0])) {
+      textToCopy = output
+        .map((arr) => {
+          return arr
+            .map((item) => {
+              return item.text;
+            })
+            .join(" ");
+        })
+        .join("\n");
+    } else {
+      textToCopy = output.join(" ");
+    }
+
     saveToClipboard(textToCopy);
     setTimeout(() => {
       setIsCopied(false);
