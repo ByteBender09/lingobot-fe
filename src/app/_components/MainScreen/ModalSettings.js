@@ -35,7 +35,7 @@ export default function ModalSettings({
       className="fixed inset-0 z-[1000] bg-black bg-opacity-70 
     flex flex-col items-end justify-start"
     >
-      <div className="bg-white dark:bg-neutral-800 h-full min-w-[25%]">
+      <div className="bg-white dark:bg-neutral-800 h-full w-[25%]">
         <div
           className="flex justify-between items-center py-4 
         border-b border-black dark:border-white px-6"
