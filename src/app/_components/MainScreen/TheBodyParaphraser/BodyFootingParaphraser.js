@@ -70,7 +70,7 @@ export default function BodyFootingParaphraser() {
           >
             <div className="flex">
               <span className="mr-[10px] text-black font-medium">
-                Blue score:
+                Bleu score:
               </span>
               <span className="text-black font-normal">
                 {score?.bleu_score ? formatScientific(score?.bleu_score, 2) : 0}
@@ -103,7 +103,7 @@ export default function BodyFootingParaphraser() {
               >
                 <h4 className="font-medium self-center">Range Value: 0 - 1</h4>
                 <div className="flex">
-                  <h4 className="mr-2 font-medium">Blue score:</h4>
+                  <h4 className="mr-2 font-medium">Bleu score:</h4>
                   <span className="font-light">
                     the proportion of similar words between 2 sentences
                   </span>
