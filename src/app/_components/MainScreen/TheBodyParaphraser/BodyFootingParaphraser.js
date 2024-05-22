@@ -98,7 +98,7 @@ export default function BodyFootingParaphraser() {
 
             {isModalVisible && (
               <div
-                className="flex absolute w-max top-[-150px] right-0 bg-white p-5 text-xs
+                className="flex absolute w-max top-[-150px] right-0 bg-white p-5 text-xs text-black
         h-max items-start justify-center flex-col gap-3 rounded-[15px] shadow border border-stone-300"
               >
                 <h4 className="font-medium self-center">Range Value: 0 - 1</h4>
