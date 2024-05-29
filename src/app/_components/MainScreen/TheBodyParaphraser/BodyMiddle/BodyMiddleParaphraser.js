@@ -190,10 +190,11 @@ export default function BodyMiddleParaphraser() {
 
   //Handle split into smaller sentence to request
   const handleAnalysisInput = () => {
-    const regex = /(?<!\d)\.(?!\d)|[?!]+/;
-    var sentences = content.split(regex);
-    console.log(sentences);
+    var sentences = content.split(/(?<=[.!?])\s+/);
     sentences = sentences.filter((sentence) => sentence.trim() !== "");
+    sentences.forEach((sentence) => {
+      console.log(sentence);
+    });
     setInput(sentences);
 
     //Init when change model
@@ -334,7 +335,28 @@ export default function BodyMiddleParaphraser() {
         if (typeof sentence == "string") {
           if (!rephrasedSentences.hasOwnProperty(sentence.trim())) {
             return handleGetSimilarMeanings(sentence).then((result) => {
-              //Store to reuse
+              const punctuation = sentence.trim().slice(-1);
+              const punctuationMarks = [".", "!", "?"];
+
+              // Check final punctuation marks
+              if (
+                !punctuationMarks.includes(
+                  result[result.length - 1].text.slice(-1)
+                ) &&
+                punctuationMarks.includes(punctuation)
+              ) {
+                result[result.length - 1].text += punctuation;
+                result[result.length - 1].alts = result[
+                  result.length - 1
+                ].alts.map((item) => {
+                  if (!punctuationMarks.includes(item.slice(-1))) {
+                    return item + punctuation;
+                  }
+                  return item;
+                });
+              }
+
+              // Store to reuse
               setRephrasedSentences((prev) => ({
                 ...prev,
                 [sentence]: result,
@@ -402,6 +424,10 @@ export default function BodyMiddleParaphraser() {
     setLoadingScore(isLoading);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
+
+  useEffect(() => {
+    console.log(output);
+  }, [output]);
 
   return (
     <div
@@ -475,7 +501,7 @@ export default function BodyMiddleParaphraser() {
               <span
                 key={indexSentence}
                 className={
-                  sentence === input[indexSentence]
+                  sentence === input[indexSentence] && isLoading
                     ? "text-gray-400"
                     : indexSentence === activeIndex
                     ? "text-black h-max dark:text-white bg-blue-50 dark:bg-neutral-800 hover:bg-blue-50 dark:hover:bg-neutral-800 cursor-pointer relative inline gap-1"
