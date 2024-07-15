@@ -19,7 +19,7 @@ import { ScoreContext } from "@/app/Context/ScoreContext";
 import { ModelStateContext } from "@/app/Context/ModelStateContext";
 import { SeletedQueryContext } from "@/app/Context/SelectedQueryContext";
 import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
-import { LISTSTYLES, SUBSCRIBTION, APIPATH } from "@/app/const";
+import { LISTSTYLES, SUBSCRIBTION, APIPATH, MODELTYPE } from "@/app/const";
 import useAxiosPrivate from "@/app/_hooks/useAxiosPrivate";
 import LoadingSpinner from "../../../Others/spinner";
 import Swal from "sweetalert2";
@@ -192,14 +192,14 @@ export default function BodyMiddleParaphraser() {
   const handleAnalysisInput = () => {
     var sentences = content.split(/(?<=[.!?])\s+/);
     sentences = sentences.filter((sentence) => sentence.trim() !== "");
-    sentences.forEach((sentence) => {
-      console.log(sentence);
-    });
     setInput(sentences);
 
     //Init when change model
     setTextStyle(LISTSTYLES[activeStyleIndex]);
-    setModelType(selectedOption);
+
+    if (selectedOption == "option1" || selectedOption == MODELTYPE.T5)
+      setModelType(MODELTYPE.T5);
+    else setModelType(MODELTYPE.MISTRAL);
   };
 
   //QUERY HISTORY
@@ -380,7 +380,6 @@ export default function BodyMiddleParaphraser() {
             setSecondPromiseComplete(true);
           }
           setFirstPromiseComplete(false);
-          console.log(results);
           setReplaceWords(results);
           if (authRepository.getAccessToken() != undefined)
             saveQueryToHistory(results);
@@ -424,10 +423,6 @@ export default function BodyMiddleParaphraser() {
     setLoadingScore(isLoading);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
-
-  useEffect(() => {
-    console.log(output);
-  }, [output]);
 
   return (
     <div
