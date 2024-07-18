@@ -190,6 +190,8 @@ export default function BodyMiddleParaphraser() {
 
   //Handle split into smaller sentence to request
   const handleAnalysisInput = () => {
+    setIsLoading(true);
+
     var sentences = content.split(/(?<=[.!?])\s+/);
     sentences = sentences.filter((sentence) => sentence.trim() !== "");
     setInput(sentences);
@@ -266,9 +268,11 @@ export default function BodyMiddleParaphraser() {
       .post(APIPATH.SCORE, object)
       .then((res) => {
         setScore(res.data);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
       });
   };
 
@@ -281,7 +285,6 @@ export default function BodyMiddleParaphraser() {
   useEffect(() => {
     if (input.length === 0) return;
     setOutput(input);
-    setIsLoading(true);
 
     let resolvedPromisesCount = 0;
 
@@ -314,13 +317,11 @@ export default function BodyMiddleParaphraser() {
 
     Promise.all(promises)
       .then(() => {
-        setIsLoading(false);
         if (resolvedPromisesCount === input.length) {
           setFirstPromiseComplete(true);
         }
       })
       .catch((err) => {
-        setIsLoading(false);
         console.error(err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -423,6 +424,14 @@ export default function BodyMiddleParaphraser() {
     setLoadingScore(isLoading);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
+
+  // Handle when change text style or model type
+  useEffect(() => {
+    if (input.length > 0) {
+      handleAnalysisInput();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeStyleIndex, selectedOption]);
 
   return (
     <div
