@@ -3,17 +3,52 @@ import { convertStringToJson } from "./handleText";
 import { LISTSTYLES, MODELTYPE } from "../const";
 
 export const handleParaphraseInput = async (sentence, style, modelType) => {
-  let processedEndpoint =
-    style !== LISTSTYLES[0] && style !== LISTSTYLES[1]
-      ? process.env.NEXT_PUBLIC_MISTRAL_ENDPOINT + "/mistral"
-      : modelType === MODELTYPE.T5
-      ? process.env.NEXT_PUBLIC_KAGGLE_ENDPOINT + "/paraphrase"
-      : process.env.NEXT_PUBLIC_MISTRAL_ENDPOINT + "/mistral";
+  if (modelType !== MODELTYPE.GPT) {
+    let processedEndpoint =
+      style !== LISTSTYLES[0] && style !== LISTSTYLES[1]
+        ? process.env.NEXT_PUBLIC_MISTRAL_ENDPOINT + "/mistral"
+        : modelType === MODELTYPE.T5
+        ? process.env.NEXT_PUBLIC_KAGGLE_ENDPOINT + "/paraphrase"
+        : process.env.NEXT_PUBLIC_MISTRAL_ENDPOINT + "/mistral";
 
-  const body = { sequence: sentence.trim(), style: style };
-  const response = await axios.post(processedEndpoint, body);
-  const result = response.data?.data || [sentence];
-  return result;
+    const body = { sequence: sentence.trim(), style: style };
+    const response = await axios.post(processedEndpoint, body);
+    const result = response.data?.data || [sentence];
+    return result;
+  } else {
+    return await handleParaphraseWithGPT(sentence, style);
+  }
+};
+
+export const handleParaphraseWithGPT = async (sentence, style) => {
+  try {
+    const response = await axios.post(
+      process.env.NEXT_PUBLIC_OPENAI_ENDPOINT,
+      {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "user",
+            content: `I want you to paraphrase this english sentence with style '${style}': "'${sentence}". And your response must have format: ["response"]`,
+          },
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
+        },
+      }
+    );
+
+    const responseData = response.data.choices[0].message.content;
+    const responseArray = JSON.parse(responseData);
+
+    return responseArray;
+  } catch (error) {
+    console.error("Error calling OpenAI API:", error);
+    return [];
+  }
 };
 
 export const handleGetSimilarMeanings = async (sentence) => {

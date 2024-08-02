@@ -135,8 +135,6 @@ export const convertStringToJson = (inputString) => {
   try {
     parseArray = JSON.parse(fixedString);
   } catch (error) {
-    console.log(filteredString);
-    console.log(fixedString);
 
     console.error("Error parsing JSON:", error);
   }
