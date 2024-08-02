@@ -16,17 +16,17 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <CurrentSubscribtionProvider>
-          <ModelStateProvider>
-            <SeletedQueryProvider>
-              <ScoreProvider>
-                <div className="h-full bg-sky-100 dark:bg-neutral-900 relative">
-                  {children}
-                </div>
-              </ScoreProvider>
-            </SeletedQueryProvider>
-          </ModelStateProvider>
-        </CurrentSubscribtionProvider>
+          <CurrentSubscribtionProvider>
+            <ModelStateProvider>
+              <SeletedQueryProvider>
+                <ScoreProvider>
+                  <div className="h-full bg-sky-100 dark:bg-neutral-900 relative">
+                    {children}
+                  </div>
+                </ScoreProvider>
+              </SeletedQueryProvider>
+            </ModelStateProvider>
+          </CurrentSubscribtionProvider>
       </body>
     </html>
   );

@@ -6,6 +6,7 @@ import {
   faDownload,
   faChevronUp,
   faChevronDown,
+  faVolumeHigh,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -14,6 +15,10 @@ import {
   saveToClipboard,
 } from "@/app/utils/handleText";
 
+import LoadingSpinner from "@/app/_components/Others/spinner";
+import { onAudioStatusChange } from "@/app/utils/eventeventEmitter";
+
+import { handleTextToSpeech } from "@/app/utils/playAudio";
 import { useKeyDown } from "@/app/_hooks/useKeyDown";
 import { useState } from "react";
 
@@ -24,6 +29,11 @@ export const BodyMiddleTools = ({
   output,
 }) => {
   const [isCopied, setIsCopied] = useState(false);
+  const [isPlayingSound, setPlayingSound] = useState(false);
+
+  onAudioStatusChange((status) => {
+    setPlayingSound(status);
+  });
 
   useKeyDown((e) => {
     if (e.altKey && e.key === "c") {
@@ -69,6 +79,20 @@ export const BodyMiddleTools = ({
     createDocx(textToCopy);
   };
 
+  const textToSpeech = () => {
+    const textToCopy = output
+      .map((arr) => {
+        return arr
+          .map((item) => {
+            return item.text;
+          })
+          .join(" ");
+      })
+      .join(" ");
+
+    handleTextToSpeech(textToCopy);
+  };
+
   return (
     <div
       className="hidden md:flex lg:flex xl:flex 2xl:flex 
@@ -98,7 +122,18 @@ export const BodyMiddleTools = ({
         </div>
       </div>
       <div className="flex items-center">
-        <button onClick={() => exportToDocx(output)}>
+        {isPlayingSound ? (
+          <LoadingSpinner />
+        ) : (
+          <button onClick={() => textToSpeech(output)}>
+            <FontAwesomeIcon
+              className="hover:text-green-500"
+              icon={faVolumeHigh}
+              size="xl"
+            />
+          </button>
+        )}
+        <button className="ml-3" onClick={() => exportToDocx(output)}>
           <FontAwesomeIcon icon={faDownload} size="xl" />
         </button>
         <button className="ml-3" onClick={handleSaveToClipboard}>

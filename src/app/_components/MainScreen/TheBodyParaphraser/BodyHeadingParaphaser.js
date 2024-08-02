@@ -92,20 +92,21 @@ export default function BodyHeadingParaphraser() {
             ></div>
           </div>
         </div>
-        {(activeStyleIndex == 0 || activeStyleIndex == 1) && (
-          <div className="hidden md:hidden lg:flex xl:flex 2xl:flex items-center">
-            <h3 className="text-[15px] font-medium">Model:</h3>
-            <select
-              className="ml-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block 
+        <div className="hidden md:hidden lg:flex xl:flex 2xl:flex items-center">
+          <h3 className="text-[15px] font-medium">Model:</h3>
+          <select
+            className="ml-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block 
             dark:text-white w-full p-2 dark:bg-neutral-800 dark:border-gray-600 outline-none"
-              value={selectedOption}
-              onChange={handleChangeModal}
-            >
+            value={selectedOption}
+            onChange={handleChangeModal}
+          >
+            {(activeStyleIndex == 0 || activeStyleIndex == 1) && (
               <option value="option1">{MODELTYPE.T5}</option>
-              <option value="option2">{MODELTYPE.MISTRAL}</option>
-            </select>
-          </div>
-        )}
+            )}
+            <option value="option2">{MODELTYPE.MISTRAL}</option>
+            <option value="option3">{MODELTYPE.GPT}</option>
+          </select>
+        </div>
       </div>
     </div>
   );

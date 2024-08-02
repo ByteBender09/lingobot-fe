@@ -9,6 +9,7 @@ import {
 } from "@/app/utils/handleText";
 import {
   handleParaphraseInput,
+  handleParaphraseWithGPT,
   handleGetSimilarMeanings,
 } from "@/app/utils/paraphrasing";
 import { axiosClient } from "@/app/_api/axios";
@@ -201,7 +202,9 @@ export default function BodyMiddleParaphraser() {
 
     if (selectedOption == "option1" || selectedOption == MODELTYPE.T5)
       setModelType(MODELTYPE.T5);
-    else setModelType(MODELTYPE.MISTRAL);
+    else if (selectedOption == "option2" || selectedOption == MODELTYPE.MISTRAL)
+      setModelType(MODELTYPE.MISTRAL);
+    else setModelType(MODELTYPE.GPT);
   };
 
   //QUERY HISTORY

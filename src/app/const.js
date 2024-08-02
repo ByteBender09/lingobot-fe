@@ -53,6 +53,6 @@ export const LISTSTYLES = [
   "Shorten",
 ];
 
-export const MODELTYPE = { T5: "T5", MISTRAL: "MISTRAL" };
+export const MODELTYPE = { T5: "T5", MISTRAL: "MISTRAL", GPT: "GPT" };
 
 export const SUBSCRIBTION = { FREE: "FREE", PREMIUM: "PREMIUM" };
