@@ -467,12 +467,12 @@ export default function BodyMiddleParaphraser() {
 
   return (
     <div
-      className="flex max-h-[80%]
+      className="flex
     flex-col md:flex-col lg:flex-row xl:flex-row 2xl:flex-row
      flex-[1] justify-between items-start mt-5"
     >
       <div
-        className="flex flex-col h-[350px] w-full flex-[1] min-w-0
+        className="flex flex-col h-full w-full flex-[1] min-w-0
       mr-0 md:mr-0 lg:mr-[0.5%] xl:mr-[0.5%] 2xl:mr-[0.5%]
       mb-2 md:mb-2 lg:mb-0 xl:mb-0 2xl:mb-0   
       text-sm font-light bg-white dark:bg-neutral-900 px-4 pt-[18px] pb-4 rounded-[17px]"
@@ -542,12 +542,12 @@ export default function BodyMiddleParaphraser() {
         </div>
       </div>
       <div
-        className="flex flex-col h-[350px] w-full text-sm font-light flex-[1] min-w-0
+        className="flex flex-col h-full w-full text-sm font-light flex-[1] min-w-0
        ml-0 md:ml-0 lg:ml-[0.5%] xl:ml-[0.5%] 2xl:ml-[0.5%]
         bg-white dark:bg-neutral-900 px-4 py-[18px] rounded-[17px]"
       >
         <div
-          className="h-max overflow-auto inline gap-1 flex-[1] pr-1 bg-transparent text-black
+          className="h-max inline gap-1 flex-[1] pr-1 bg-transparent text-black
          dark:text-white leading-[30px] outline-none mb-2 font-medium text-wrap"
         >
           {output.map((sentence, indexSentence) => {
