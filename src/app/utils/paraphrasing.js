@@ -79,3 +79,64 @@ export const handleGetSimilarMeanings = async (sentence) => {
     return [{ text: sentence, alts: [] }];
   }
 };
+
+export const handleGetAnalysic = async (sentence) => {
+  try {
+    const response = await axios.post(
+      process.env.NEXT_PUBLIC_OPENAI_ENDPOINT,
+      {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "user",
+            content: `Briefly evaluate the passage: "${sentence}"`,
+          },
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
+        },
+      }
+    );
+
+    const responseData = response.data.choices[0].message.content;
+
+    return responseData;
+  } catch (error) {
+    console.error("Error calling OpenAI API:", error);
+    return [];
+  }
+};
+
+export const handleGetAnalysicDetail = async (sentence) => {
+  try {
+    const response = await axios.post(
+      process.env.NEXT_PUBLIC_OPENAI_ENDPOINT,
+      {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "user",
+            content: `"Evaluation sentence by sentence in detail way the passage and return with json format {\"evaluation\":{\"clarity\":\"string\",\"grammar\":[\"string\"],\"coherence\":\"string\",\"structure\":\"string\",\"overall\":\"string\"},\"With Passage\":\"${sentence}\"}"`,
+          },
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
+        },
+      }
+    );
+
+    const responseData = response.data.choices[0].message.content;
+    const responseArray = JSON.parse(responseData);
+
+    return responseArray;
+  } catch (error) {
+    console.error("Error calling OpenAI API:", error);
+    return [];
+  }
+};
