@@ -24,7 +24,7 @@ export default function PremiumPage() {
       text-[20px] md:text-[20px] lg:text-[30px] xl:text-[35px] 2xl:text-[35px]
       my-6 md:my-6 lg:my-10 xl:my-12 2xl:my-12"
         >
-          Update your writing
+          Upgrade your writing
         </h3>
         <div
           className="min-w-[50%] flex bg-white dark:bg-neutral-900 rounded-[20px] border border-stone-300 dark:border-zinc-500 relative
@@ -93,7 +93,7 @@ export default function PremiumPage() {
               hover:bg-amber-400 transition duration-200 ease-in-out"
                 onClick={goUpgrade}
               >
-                Update
+                Upgrade
               </button>
               <div className="flex flex-col self-start">
                 {premiumServiceItems.map((item, index) => (

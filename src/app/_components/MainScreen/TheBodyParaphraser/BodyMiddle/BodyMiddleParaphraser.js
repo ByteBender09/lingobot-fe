@@ -1,7 +1,11 @@
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowUp, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChartSimple,
+  faCloudArrowUp,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   countWordsFromDocFile,
   getParagraphsFromDocFile,
@@ -9,8 +13,8 @@ import {
 } from "@/app/utils/handleText";
 import {
   handleParaphraseInput,
-  handleParaphraseWithGPT,
   handleGetSimilarMeanings,
+  handleGetAnalysic,
 } from "@/app/utils/paraphrasing";
 import { axiosClient } from "@/app/_api/axios";
 import { useState, useRef, useEffect, useContext } from "react";
@@ -18,6 +22,7 @@ import { useKeyDown } from "@/app/_hooks/useKeyDown";
 import { BodyMiddleTools } from "./BodyMiddleTools";
 import { ScoreContext } from "@/app/Context/ScoreContext";
 import { ModelStateContext } from "@/app/Context/ModelStateContext";
+import ModalAnalysicInput from "../../ModalAnalysicInput";
 import { SeletedQueryContext } from "@/app/Context/SelectedQueryContext";
 import { CurrentSubscribtionContext } from "@/app/Context/CurrentSubscribtionContext";
 import { LISTSTYLES, SUBSCRIBTION, APIPATH, MODELTYPE } from "@/app/const";
@@ -50,6 +55,11 @@ export default function BodyMiddleParaphraser() {
   const [replaceWords, setReplaceWords] = useState([]);
   const fileInputRef = useRef(null);
   const timeoutRef = useRef(null);
+
+  //ANALYSIC INPUT
+  const [isOpenModalAnalysic, setIsOpenModalAnalysic] = useState(false);
+  const [resultAnalysic, setResultAnalysic] = useState("");
+  const [isLoadingAnalysic, setIsLoadingAnalysic] = useState(false);
 
   //Handle change content user input
   const handleChangeContent = (value) => {
@@ -205,6 +215,25 @@ export default function BodyMiddleParaphraser() {
     else if (selectedOption == "option2" || selectedOption == MODELTYPE.MISTRAL)
       setModelType(MODELTYPE.MISTRAL);
     else setModelType(MODELTYPE.GPT);
+  };
+
+  //ANALYSIC INPUT
+  const getAnalysicFromGPT = () => {
+    setIsLoadingAnalysic(true);
+    handleGetAnalysic(content)
+      .then((result) => {
+        setResultAnalysic(result);
+        setIsLoadingAnalysic(false);
+        setIsOpenModalAnalysic(true);
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsLoadingAnalysic(false);
+      });
+  };
+
+  const closeModal = () => {
+    setIsOpenModalAnalysic(false);
   };
 
   //QUERY HISTORY
@@ -438,12 +467,12 @@ export default function BodyMiddleParaphraser() {
 
   return (
     <div
-      className="flex
+      className="flex max-h-[80%]
     flex-col md:flex-col lg:flex-row xl:flex-row 2xl:flex-row
      flex-[1] justify-between items-start mt-5"
     >
       <div
-        className="flex flex-col h-full w-full flex-[1] min-w-0
+        className="flex flex-col h-[350px] w-full flex-[1] min-w-0
       mr-0 md:mr-0 lg:mr-[0.5%] xl:mr-[0.5%] 2xl:mr-[0.5%]
       mb-2 md:mb-2 lg:mb-0 xl:mb-0 2xl:mb-0   
       text-sm font-light bg-white dark:bg-neutral-900 px-4 pt-[18px] pb-4 rounded-[17px]"
@@ -466,6 +495,24 @@ export default function BodyMiddleParaphraser() {
             <span className="text-[15px] font-light mr-3">
               {countWordsFromDocFile(content)} Words
             </span>
+            {countWordsFromDocFile(content) > 6 &&
+              (isLoadingAnalysic ? (
+                <div className="mr-3">
+                  <LoadingSpinner />
+                </div>
+              ) : (
+                <button
+                  className="mr-3 hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block"
+                  onClick={() => getAnalysicFromGPT(content)}
+                >
+                  <FontAwesomeIcon
+                    icon={faChartSimple}
+                    size="xl"
+                    color="#666666"
+                  />
+                </button>
+              ))}
+
             <button
               className="mr-3 hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block"
               onClick={() => {
@@ -495,12 +542,12 @@ export default function BodyMiddleParaphraser() {
         </div>
       </div>
       <div
-        className="flex flex-col h-full w-full text-sm font-light flex-[1] min-w-0
+        className="flex flex-col h-[350px] w-full text-sm font-light flex-[1] min-w-0
        ml-0 md:ml-0 lg:ml-[0.5%] xl:ml-[0.5%] 2xl:ml-[0.5%]
         bg-white dark:bg-neutral-900 px-4 py-[18px] rounded-[17px]"
       >
         <div
-          className="h-max inline gap-1 flex-[1] pr-1 bg-transparent text-black
+          className="h-max overflow-auto inline gap-1 flex-[1] pr-1 bg-transparent text-black
          dark:text-white leading-[30px] outline-none mb-2 font-medium text-wrap"
         >
           {output.map((sentence, indexSentence) => {
@@ -623,6 +670,9 @@ export default function BodyMiddleParaphraser() {
           output={output}
         />
       </div>
+      {isOpenModalAnalysic && (
+        <ModalAnalysicInput closeModal={closeModal} content={resultAnalysic} />
+      )}
     </div>
   );
 }
