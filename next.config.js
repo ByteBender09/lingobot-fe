@@ -1,6 +1,18 @@
-const nextConfig = {
+module.exports = {
+  future: {
+    webpack5: true,   
+  },
+
   reactStrictMode: true,
   outputFileTracing: false,
-};
 
-module.exports = nextConfig;
+  webpack(config) {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,  
+
+      fs: false,
+    };
+    
+    return config;
+  },
+};

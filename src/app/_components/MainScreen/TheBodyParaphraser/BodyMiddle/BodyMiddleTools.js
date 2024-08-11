@@ -125,7 +125,7 @@ export const BodyMiddleTools = ({
         {isPlayingSound ? (
           <LoadingSpinner />
         ) : (
-          <button onClick={() => textToSpeech(output)}>
+          <button onClick={() => textToSpeech(output)} title="Speak">
             <FontAwesomeIcon
               className="hover:text-green-500"
               icon={faVolumeHigh}
@@ -133,10 +133,18 @@ export const BodyMiddleTools = ({
             />
           </button>
         )}
-        <button className="ml-3" onClick={() => exportToDocx(output)}>
+        <button
+          className="ml-3"
+          onClick={() => exportToDocx(output)}
+          title="Export To Doc"
+        >
           <FontAwesomeIcon icon={faDownload} size="xl" />
         </button>
-        <button className="ml-3" onClick={handleSaveToClipboard}>
+        <button
+          className="ml-3"
+          onClick={handleSaveToClipboard}
+          title="Save to clipboard"
+        >
           <FontAwesomeIcon
             icon={faCopy}
             size="xl"

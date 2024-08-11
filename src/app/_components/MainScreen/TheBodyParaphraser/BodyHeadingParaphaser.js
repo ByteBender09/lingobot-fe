@@ -25,18 +25,23 @@ export default function BodyHeadingParaphraser() {
   };
 
   const handleTextStyleClick = (index) => {
-    if (index >= 2) setSelectedOption(MODELTYPE.MISTRAL);
-    if (subscribtion === SUBSCRIBTION.PREMIUM) setActiveStyleIndex(index);
-    else {
-      if (index < 2) setActiveStyleIndex(index);
-      else {
+    if (subscribtion !== SUBSCRIBTION.PREMIUM) {
+      if (index >= 2) {
         Swal.fire({
           title: "Only available for premium users!",
           icon: "warning",
           timer: 2000,
         });
+        return;
       }
+      setActiveStyleIndex(index);
+      return;
     }
+
+    if (index >= 2) {
+      setSelectedOption(MODELTYPE.MISTRAL);
+    }
+    setActiveStyleIndex(index);
   };
 
   useEffect(() => {

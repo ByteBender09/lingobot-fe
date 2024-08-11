@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartSimple,
   faCloudArrowUp,
+  faMicrophone,
+  faRecordVinyl,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -16,6 +18,7 @@ import {
   handleGetSimilarMeanings,
   handleGetAnalysic,
 } from "@/app/utils/paraphrasing";
+import { handleSpeechToText } from "@/app/utils/speechToText";
 import { axiosClient } from "@/app/_api/axios";
 import { useState, useRef, useEffect, useContext } from "react";
 import { useKeyDown } from "@/app/_hooks/useKeyDown";
@@ -60,6 +63,10 @@ export default function BodyMiddleParaphraser() {
   const [isOpenModalAnalysic, setIsOpenModalAnalysic] = useState(false);
   const [resultAnalysic, setResultAnalysic] = useState("");
   const [isLoadingAnalysic, setIsLoadingAnalysic] = useState(false);
+
+  //RECORDING
+  const [isRecording, setIsRecording] = useState(false);
+  const [isLoadingRecording, setIsLoadingRecording] = useState(false);
 
   //Handle change content user input
   const handleChangeContent = (value) => {
@@ -234,6 +241,75 @@ export default function BodyMiddleParaphraser() {
 
   const closeModal = () => {
     setIsOpenModalAnalysic(false);
+  };
+
+  //RECORDING
+  const recorder = useRef(null);
+  let chunks = [];
+  let audioStream = null;
+
+  const SetupStream = (stream) => {
+    audioStream = stream;
+    recorder.current = new MediaRecorder(stream);
+
+    recorder.current.ondataavailable = (e) => {
+      chunks.push(e.data);
+    };
+
+    recorder.current.onstop = () => {
+      if (chunks && chunks.length > 0) {
+        const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+        setIsLoadingRecording(true);
+
+        handleSpeechToText(blob)
+          .then((result) => {
+            setContent(result);
+            setIsLoadingRecording(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setIsLoadingRecording(false);
+            stopStream();
+          })
+          .finally(() => {
+            chunks = [];
+            stopStream();
+          });
+      } else {
+        console.log("No audio data available");
+      }
+    };
+
+    recorder.current.start();
+  };
+
+  const startRecording = async () => {
+    setIsRecording(true);
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(SetupStream)
+        .catch((err) => {
+          console.log(err);
+          setIsRecording(false);
+        });
+    }
+  };
+
+  const stopRecording = () => {
+    if (recorder.current && recorder.current.state !== "inactive") {
+      recorder.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const stopStream = () => {
+    if (audioStream) {
+      audioStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
   };
 
   //QUERY HISTORY
@@ -504,6 +580,7 @@ export default function BodyMiddleParaphraser() {
                 <button
                   className="mr-3 hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block"
                   onClick={() => getAnalysicFromGPT(content)}
+                  title="Get analysis"
                 >
                   <FontAwesomeIcon
                     icon={faChartSimple}
@@ -518,6 +595,7 @@ export default function BodyMiddleParaphraser() {
               onClick={() => {
                 fileInputRef.current.click();
               }}
+              title="Upload a docx file"
             >
               <FontAwesomeIcon
                 icon={faCloudArrowUp}
@@ -525,9 +603,40 @@ export default function BodyMiddleParaphraser() {
                 color="#666666"
               />
             </button>
+            {isLoadingRecording ? (
+              <div className="mr-3">
+                <LoadingSpinner />
+              </div>
+            ) : !isRecording ? (
+              <button
+                className="mr-3 hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block"
+                onClick={() => startRecording()}
+                title="Record"
+              >
+                <FontAwesomeIcon
+                  icon={faMicrophone}
+                  size="xl"
+                  color="#666666"
+                />
+              </button>
+            ) : (
+              <button
+                className="mr-3 hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block"
+                onClick={() => stopRecording()}
+                title="Stop Recording"
+              >
+                <FontAwesomeIcon
+                  icon={faRecordVinyl}
+                  size="xl"
+                  color="#FF5252"
+                />
+              </button>
+            )}
+
             <button
               className="hidden md:hidden lg:hidden xl:inline-block 2xl:inline-block"
               onClick={() => setContent("")}
+              title="Clear content"
             >
               <FontAwesomeIcon icon={faTrash} size="xl" color="#666666" />
             </button>
@@ -548,7 +657,7 @@ export default function BodyMiddleParaphraser() {
       >
         <div
           className="h-max inline gap-1 flex-[1] pr-1 bg-transparent text-black
-         dark:text-white leading-[30px] outline-none mb-2 font-medium text-wrap"
+         dark:text-white leading-[30px] outline-none mb-2 font-medium text-wrap overflow-auto max-h-[calc(100vh-380px)]"
         >
           {output.map((sentence, indexSentence) => {
             return (
