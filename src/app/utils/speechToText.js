@@ -6,6 +6,7 @@ export const handleSpeechToText = async (blob) => {
     const file = new File([blob], "audio.ogg", { type: "audio/ogg" });
     formData.append("file", file);
     formData.append("model", "whisper-1");
+    formData.append("language", "en");
 
     const response = await axios.post(
       "https://api.openai.com/v1/audio/transcriptions",
