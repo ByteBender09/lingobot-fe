@@ -585,6 +585,7 @@ export default function BodyMiddleParaphraser() {
                   <FontAwesomeIcon
                     icon={faChartSimple}
                     size="xl"
+                    className="dark:text-white"
                     color="#666666"
                   />
                 </button>
@@ -601,6 +602,7 @@ export default function BodyMiddleParaphraser() {
                 icon={faCloudArrowUp}
                 size="xl"
                 color="#666666"
+                className="dark:text-white"
               />
             </button>
             {isLoadingRecording ? (
@@ -617,6 +619,7 @@ export default function BodyMiddleParaphraser() {
                   icon={faMicrophone}
                   size="xl"
                   color="#666666"
+                  className="dark:text-white"
                 />
               </button>
             ) : (
@@ -638,7 +641,12 @@ export default function BodyMiddleParaphraser() {
               onClick={() => setContent("")}
               title="Clear content"
             >
-              <FontAwesomeIcon icon={faTrash} size="xl" color="#666666" />
+              <FontAwesomeIcon
+                icon={faTrash}
+                size="xl"
+                color="#666666"
+                className="dark:text-white"
+              />
             </button>
           </div>
           <button

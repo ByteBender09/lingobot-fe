@@ -90,22 +90,26 @@ export default function ModalUpdateUserInfor({ closeModal }) {
       <div
         className="flex flex-col 
       px-4 md:px-4 lg:px-10 xl:px-10 2xl:px-10
-       py-9 bg-white rounded-[20px] min-w-[40%] relative"
+       py-9 bg-white dark:bg-neutral-800 rounded-[20px] min-w-[40%] relative"
       >
         <button className="absolute top-10 right-10" onClick={closeModal}>
-          <FontAwesomeIcon icon={faClose} size="1x" />
+          <FontAwesomeIcon
+            icon={faClose}
+            size="1x"
+            className="dark:text-white"
+          />
         </button>
-        <h3 className="text-black text-xl font-medium mb-9 self-center">
+        <h3 className="text-black dark:text-white text-xl font-medium mb-9 self-center">
           Update Information
         </h3>
         <div className="flex justify-between items-start">
           <div className="flex flex-col justify-start mr-[1%]">
-            <span className="text-neutral-600 text-base font-normal mb-2">
+            <span className="text-neutral-600 dark:text-white text-base font-normal mb-2">
               First Name
             </span>
             <input
               type="text"
-              className="w-full bg-white px-4 py-2 mb-2 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
+              className="w-full bg-white dark:bg-neutral-800 dark:text-white px-4 py-2 mb-2 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
               value={firstName}
               ref={FirstNameInput}
               onChange={(e) => setFirstName(e.target.value)}
@@ -117,12 +121,12 @@ export default function ModalUpdateUserInfor({ closeModal }) {
             </span>
           </div>
           <div className="flex flex-col ml-[1%]">
-            <span className="text-neutral-600 text-base font-normal mb-2">
+            <span className="text-neutral-600 dark:text-white text-base font-normal mb-2">
               Last Name
             </span>
             <input
               type="text"
-              className="w-full bg-white px-4 py-2 mb-2 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
+              className="w-full bg-white dark:bg-neutral-800 dark:text-white px-4 py-2 mb-2 text-neutral-950 text-base font-normal rounded-[10px] border outline-none border-neutral-200"
               value={lastName}
               ref={LastNameInput}
               onChange={(e) => setLastName(e.target.value)}
@@ -134,7 +138,9 @@ export default function ModalUpdateUserInfor({ closeModal }) {
             </span>
           </div>
         </div>
-        <h3 className="text-neutral-600 text-base font-normal mt-7">Gender</h3>
+        <h3 className="text-neutral-600 dark:text-white text-base font-normal mt-7">
+          Gender
+        </h3>
         <div className="flex w-full justify-around items-center">
           <div className="flex items-center">
             <input
@@ -147,7 +153,7 @@ export default function ModalUpdateUserInfor({ closeModal }) {
             />
             <label
               htmlFor="genderMale"
-              className="text-black text-base font-normal ml-4"
+              className="text-black dark:text-white text-base font-normal ml-4"
             >
               Male
             </label>
@@ -163,7 +169,7 @@ export default function ModalUpdateUserInfor({ closeModal }) {
             />
             <label
               htmlFor="genderFemale"
-              className="text-black text-base font-normal ml-4"
+              className="text-black dark:text-white text-base font-normal ml-4"
             >
               Female
             </label>

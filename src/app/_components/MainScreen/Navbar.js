@@ -130,13 +130,13 @@ const Navbar = () => {
                     ? "bottom-[-140px]"
                     : "bottom-[-100px]"
                 }  right-0 
-              transition-opacity opacity-0 duration-500 modal_profile z-20
-              hidden flex-col py-2 bg-white dark:bg-neutral-900 rounded-[10px] shadow`}
+              transition-opacity opacity-0 duration-500 modal_profile z-20 border border-stone-300
+              hidden flex-col py-2 bg-white dark:bg-neutral-800 rounded-[10px] shadow`}
               >
                 {subscribtion === SUBSCRIBTION.FREE && (
                   <Link
                     className="w-full cursor-pointer px-7 py-2 flex items-center justify-start 
-              bg-white dark:bg-neutral-900 hover:bg-amber-300"
+              bg-white dark:bg-neutral-800 hover:bg-amber-300 dark:hover:bg-amber-600"
                     href={PATH.PREMIUM}
                   >
                     <FontAwesomeIcon
@@ -151,7 +151,7 @@ const Navbar = () => {
 
                 <div
                   className="w-full cursor-pointer px-7 py-2 flex items-center justify-start
-              bg-white dark:bg-neutral-900 hover:bg-amber-300"
+              bg-white dark:bg-neutral-800 hover:bg-amber-300 dark:hover:bg-amber-600"
                   onClick={openModal}
                 >
                   <FontAwesomeIcon
@@ -164,7 +164,7 @@ const Navbar = () => {
                 </div>
                 <div
                   className="w-full cursor-pointer px-7 py-2 flex items-center justify-start
-              bg-white dark:bg-neutral-900 hover:bg-amber-300"
+              bg-white dark:bg-neutral-800 hover:bg-amber-300 dark:hover:bg-amber-600"
                   onClick={handleLogOutClick}
                 >
                   <FontAwesomeIcon

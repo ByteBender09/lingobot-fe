@@ -46,16 +46,16 @@ export default function BodyFootingParaphraser() {
       <div className="flex">
         <div
           className="px-4 py-3 hidden md:flex lg:flex xl:flex 2xl:flex items-center 
-      bg-cyan-100 dark:bg-gray-200 rounded-[14px] text-black "
+      bg-cyan-100 dark:bg-neutral-900 rounded-[14px] text-black "
         >
-          <button>
+          <button className="dark:text-white">
             <FontAwesomeIcon
               icon={faKeyboard}
               onClick={() => handleOpenModal(0)}
             />
           </button>
           {isAuthenticated && (
-            <button className="ml-4">
+            <button className="ml-4 dark:text-white">
               <FontAwesomeIcon
                 icon={faClockRotateLeft}
                 onClick={() => handleOpenModal(1)}
@@ -66,31 +66,35 @@ export default function BodyFootingParaphraser() {
         {!loadingScore && (
           <div
             className="px-4 py-3 hidden md:flex lg:flex xl:flex 2xl:flex items-center 
-      bg-cyan-100 dark:bg-gray-200 rounded-[14px] text-black dark:text-white ml-3 text-sm relative"
+      bg-cyan-100 dark:bg-neutral-900 rounded-[14px] text-black dark:text-white ml-3 text-sm relative"
           >
             <div className="flex">
-              <span className="mr-[10px] text-black font-medium">
+              <span className="mr-[10px] text-black dark:text-white font-medium">
                 Bleu score:
               </span>
-              <span className="text-black font-normal">
+              <span className="text-black dark:text-white font-normal">
                 {score?.bleu_score ? formatScientific(score?.bleu_score, 2) : 0}
               </span>
             </div>
             <div className="flex ml-6">
-              <span className="mr-[10px] text-black font-medium">WPD:</span>
-              <span className="text-black font-normal">
+              <span className="mr-[10px] text-black dark:text-white font-medium">
+                WPD:
+              </span>
+              <span className="text-black dark:text-white font-normal">
                 {score?.wpd ? score?.wpd.toFixed(3) : 0}
               </span>
             </div>
             <div className="flex ml-6">
-              <span className="mr-[10px] text-black font-medium">LD:</span>
-              <span className="text-black font-normal">
+              <span className="mr-[10px] text-black dark:text-white font-medium">
+                LD:
+              </span>
+              <span className="text-black dark:text-white font-normal">
                 {score?.ld ? score?.ld.toFixed(3) : 0}
               </span>
             </div>
             <FontAwesomeIcon
               icon={faCircleQuestion}
-              className="ml-7 size-[20px] cursor-pointer"
+              className="ml-7 size-[20px] cursor-pointer dark:text-white"
               color="#58595E"
               onMouseEnter={() => setIsModalVisible(true)}
               onMouseLeave={() => setIsModalVisible(false)}
@@ -98,7 +102,7 @@ export default function BodyFootingParaphraser() {
 
             {isModalVisible && (
               <div
-                className="flex absolute w-max top-[-150px] right-0 bg-white p-5 text-xs text-black
+                className="flex absolute w-max top-[-150px] right-0 bg-white dark:bg-neutral-800 p-5 text-xs text-black dark:text-white
         h-max items-start justify-center flex-col gap-3 rounded-[15px] shadow border border-stone-300"
               >
                 <h4 className="font-medium self-center">Range Value: 0 - 1</h4>
